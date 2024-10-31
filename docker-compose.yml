@@ -22,63 +22,50 @@ services:
     image: postgres:15-alpine
     restart: always
     environment:
-      POSTGRES_DB: djangodefault
+      POSTGRES_DB: mystories
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: '1253'
     volumes:
       - pg_data:/var/lib/postgresql/data
 
-#  backup:
-#    build:
-#      context: .
-#      dockerfile: deployments/compose/backup/Dockerfile
-#    image: backup
-#    command: /start-backup
-#    restart: always
-#    volumes:
-#      - /backups:/backups
-#    env_file:
-#      - .env
-#    depends_on:
-#      - db
 
 
-#  redis:
-#    restart: always
-#    image: redis
-#
-#  rabbitmq:
-#    image: rabbitmq:management
-#    env_file:
-#      - .env
-#    restart: always
-#    container_name: rabbitmq
-#    environment:
-#      - RABBITMQ_DEFAULT_USER=guest
-#      - RABBITMQ_DEFAULT_PASS=guest
-#    ports:
-#      - ${RABBITMQ_PORT:-15672}:15672
-#    volumes:
-#      - rabbitmq:/var/lib/rabbitmq
-#
-#
-#
-#  celery_worker:
-#    build:
-#      context: .
-#      dockerfile: ./deployments/compose/django/Dockerfile
-#    image: celery_worker
-#    command: /start-celeryworker
-#    restart: always
-#    volumes:
-#      - .:/app
-#    env_file:
-#      - .env
-#    depends_on:
-#      - redis
-#      - rabbitmq
-#      - db
-#
+  redis:
+    restart: always
+    image: redis
+
+  rabbitmq:
+    image: rabbitmq:management
+    env_file:
+      - .env
+    restart: always
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - ${RABBITMQ_PORT:-15672}:15672
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+
+
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: ./deployments/compose/django/Dockerfile
+    image: celery_worker
+    command: /start-celeryworker
+    restart: always
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - rabbitmq
+      - db
+
 #  celery_beat:
 #    build:
 #      context: .
@@ -115,4 +102,4 @@ services:
 
 volumes:
   pg_data:
-#  rabbitmq:
+  rabbitmq:
