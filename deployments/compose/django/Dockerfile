@@ -8,12 +8,12 @@ ENV PYTHONUNBUFFERED=1 \
     LC_ALL=C.UTF-8
 
 # Install Flower for Celery monitoring
-#RUN pip install flower
+RUN pip install flower
 
 # Copy and set permissions for celery worker start script
-#COPY ./deployments/compose/django/celery/worker/start /start-celeryworker
-#RUN sed -i 's/\r$//g' /start-celeryworker && \
-#    chmod +x /start-celeryworker
+COPY ./deployments/compose/django/celery/worker/start /start-celeryworker
+RUN sed -i 's/\r$//g' /start-celeryworker && \
+    chmod +x /start-celeryworker
 
 # Copy and set permissions for celery beat start script
 #COPY ./deployments/compose/django/celery/beat/start /start-celerybeat

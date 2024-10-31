@@ -1,2 +1,5 @@
 venv/
-resources/staticfiles/
+assets/staticfiles/
+assets/staticfiles/*
+assets/media/*
+assets/media/
