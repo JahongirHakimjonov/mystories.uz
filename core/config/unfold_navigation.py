@@ -36,14 +36,14 @@ PAGES = [
                     request.user, "view_group"
                 ),
             },
-            {
-                "title": _("Foydalanuvchilar"),
-                "icon": "person_add",
-                "link": reverse_lazy("admin:auth_user_changelist"),
-                "permission": lambda request: user_has_group_or_permission(
-                    request.user, "view_user"
-                ),
-            },
+            # {
+            #     "title": _("Foydalanuvchilar"),
+            #     "icon": "person_add",
+            #     "link": reverse_lazy("admin:auth_user_changelist"),
+            #     "permission": lambda request: user_has_group_or_permission(
+            #         request.user, "view_user"
+            #     ),
+            # },
         ],
     },
 ]
