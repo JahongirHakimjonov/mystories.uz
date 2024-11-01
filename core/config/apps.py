@@ -13,6 +13,11 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "drf_spectacular",
     "drf_spectacular_sidecar",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.github",
 ]
 
 DEFAULT_APPS = [
@@ -22,8 +27,12 @@ DEFAULT_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
 ]
 
 PROJECT_APPS = [
     "apps.shared.apps.SharedConfig",
+    "apps.users.apps.UsersConfig",
+    "apps.mystories.apps.MystoriesConfig",
+    "apps.websocket.apps.WebsocketConfig",
 ]
