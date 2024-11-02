@@ -12,6 +12,12 @@ class RoleChoices(models.TextChoices):
     MODERATOR = "MODERATOR", _("Moderator")
 
 
+class RegisterTypeChoices(models.TextChoices):
+    EMAIL = "EMAIL", _("Email orqali")
+    GOOGLE = "GOOGLE", _("Google orqali")
+    GITHUB = "GITHUB", _("Github orqali")
+
+
 class User(AbstractUser, AbstractBaseModel):
     email = models.EmailField(
         unique=True,
@@ -43,6 +49,12 @@ class User(AbstractUser, AbstractBaseModel):
         null=True,
         blank=True,
         verbose_name=_("Davlat"),
+    )
+    register_type = models.CharField(
+        choices=RegisterTypeChoices.choices,
+        max_length=20,
+        default=RegisterTypeChoices.EMAIL,
+        verbose_name=_("Ro'yxatdan o'tish turi"),
     )
 
     USERNAME_FIELD = "email"

@@ -1,9 +1,9 @@
-name: Deploy Django Application to Server for Prod
+name: Deploy Django Application to Server for Dev
 
 on:
   push:
     branches:
-      - main  # Bu yerda kodni qaysi branch'dan push qilganda deploy ishga tushishini ko'rsatasiz
+      - dev  # Bu yerda kodni qaysi branch'dan push qilganda deploy ishga tushishini ko'rsatasiz
 
 jobs:
   deploy:

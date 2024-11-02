@@ -21,6 +21,7 @@ class Country(AbstractBaseModel):
     class Meta:
         verbose_name = _("Davlat")
         verbose_name_plural = _("Davlatlar")
+        db_table = "countries"
 
     def __str__(self):
         return self.name
