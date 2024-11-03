@@ -16,6 +16,36 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
     list_filter = ("role", "is_active")
     list_editable = ("is_active",)
     list_display_links = ("id", "username")
+    fieldsets = (
+        (None, {"fields": ("email", "password")}),
+        (
+            "Personal info",
+            {
+                "fields": (
+                    "username",
+                    "first_name",
+                    "last_name",
+                    "avatar",
+                    "country",
+                    "register_type",
+                )
+            },
+        ),
+        (
+            "Permissions",
+            {
+                "fields": (
+                    "role",
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                    "groups",
+                    "user_permissions",
+                )
+            },
+        ),
+        ("Important dates", {"fields": ("last_login", "date_joined")}),
+    )
     add_fieldsets = (
         (
             None,
