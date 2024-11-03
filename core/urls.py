@@ -9,8 +9,8 @@ from core.config.swagger import urlpatterns as swagger_patterns
 urlpatterns = [
     path("", include("apps.shared.urls")),
     path("", include("apps.users.urls")),
+    path("", include("apps.websocket.urls")),
     path("admin/", admin.site.urls),
-    path("accounts/", include("allauth.urls")),
     path("i18n/", include("django.conf.urls.i18n")),
     path("ckeditor5/", include("django_ckeditor_5.urls")),
     path("rosetta/", include("rosetta.urls")),

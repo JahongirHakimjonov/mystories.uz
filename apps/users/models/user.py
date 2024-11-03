@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.shared.models import AbstractBaseModel
 from apps.users.managers import UserManager
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class RoleChoices(models.TextChoices):
@@ -98,3 +99,7 @@ class User(AbstractUser, AbstractBaseModel):
             models.Index(fields=["email"]),
             models.Index(fields=["username"]),
         ]
+
+    def tokens(self):
+        refresh = RefreshToken.for_user(self)
+        return {"refresh": str(refresh), "access": str(refresh.access_token)}
