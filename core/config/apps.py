@@ -1,5 +1,4 @@
 THIRD_PARTY_APPS = [
-    # "jazzmin",
     "unfold",
     "unfold.contrib.filters",
     "unfold.contrib.forms",
@@ -26,4 +25,7 @@ DEFAULT_APPS = [
 
 PROJECT_APPS = [
     "apps.shared.apps.SharedConfig",
+    "apps.users.apps.UsersConfig",
+    "apps.mystories.apps.MystoriesConfig",
+    "apps.websocket.apps.WebsocketConfig",
 ]
