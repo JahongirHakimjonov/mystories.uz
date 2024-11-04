@@ -2,24 +2,33 @@ from django.contrib.auth import authenticate
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+from apps.users.models import User
+
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     username_field = "username"
 
     def validate(self, attrs):
         credentials = {
-            "username": attrs.get(self.username_field),
+            "identifier": attrs.get(self.username_field) or attrs.get("email"),
             "password": attrs.get("password"),
         }
 
-        user = authenticate(**credentials)
+        user = authenticate(
+            username=credentials["identifier"], password=credentials["password"]
+        )
 
-        if user is None or not user.is_active:
-            raise serializers.ValidationError("Invalid credentials or inactive user.")
+        if user is None:
+            user = User.objects.filter(username=credentials["identifier"]).first()
+            if user:
+                email = user.email
+                user = authenticate(username=email, password=credentials["password"])
+
+        if user is None:
+            raise serializers.ValidationError("Invalid credentials")
 
         token = super().get_token(user)
 
-        # Add custom claims
         token["username"] = user.username
         token["email"] = user.email
 

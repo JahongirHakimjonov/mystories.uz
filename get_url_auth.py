@@ -1,10 +1,26 @@
+import urllib.parse
+
+import requests
+
+
 # # birinchi link generatsiya qilinadi
 #
 #
-# def get_github_code(client_id, redirect_uri):
-#     url = f"https://github.com/login/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}"
-#     response = requests.get(url)
-#     return response.url
+
+
+def get_github_code(client_id, redirect_uri):
+    url = f"https://github.com/login/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}"
+    response = requests.get(url)
+    return response.url
+
+
+print(
+    get_github_code(
+        "Ov23lifn4y25nfQAnUvu", "http://127.0.0.1:8000/auth/github/callback/"
+    )
+)
+
+
 #
 #
 # # Example usage
@@ -46,8 +62,6 @@
 #     response = requests.get(url, headers=headers)
 #     response.raise_for_status()
 #     return response.json()
-
-import urllib.parse
 
 
 def get_google_code(client_id, redirect_uri, scopes):
