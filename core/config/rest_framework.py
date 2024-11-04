@@ -10,6 +10,6 @@ SPECTACULAR_SETTINGS = {
     "SWAGGER_UI_DIST": "SIDECAR",
     "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
     "REDOC_DIST": "SIDECAR",
-    "TITLE": "Django Rest API",
-    "DESCRIPTION": "Django Rest API",
+    "TITLE": "My Stories API",
+    "DESCRIPTION": "My Stories Swagger API documentation",
 }
