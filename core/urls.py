@@ -7,7 +7,7 @@ from django.views.static import serve
 from core.config.swagger import urlpatterns as swagger_patterns
 
 urlpatterns = [
-    path("api/v1/", include("apps.shared.urls")),
+    path("", include("apps.shared.urls")),
     path("api/v1/", include("apps.users.urls")),
     path("api/v1/", include("apps.websocket.urls")),
     path("admin/", admin.site.urls),
