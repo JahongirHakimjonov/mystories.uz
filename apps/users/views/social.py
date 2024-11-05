@@ -1,3 +1,4 @@
+from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -43,4 +44,12 @@ class SocialAuthView(APIView):
             )
 
     def get(self, request, provider_name, *args, **kwargs):
-        return JsonResponse("Nice job my nigga", status=status.HTTP_200_OK, safe=False)
+        if provider_name == "github":
+            url = Github.get_auth_url()
+        elif provider_name == "google":
+            url = Google.get_auth_url()
+        else:
+            return JsonResponse(
+                {"error": "Unsupported provider"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        return HttpResponseRedirect(url)

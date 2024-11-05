@@ -115,3 +115,11 @@ class Github:
         except requests.RequestException as e:
             # Handle request errors
             raise ValueError(f"Failed to exchange code: {str(e)}")
+
+    @staticmethod
+    def get_auth_url():
+        client_id = os.getenv("GITHUB_CLIENT_ID")
+        redirect_uri = os.getenv("GITHUB_REDIRECT_URI")
+        url = f"https://github.com/login/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}"
+        response = requests.get(url)
+        return response.url
