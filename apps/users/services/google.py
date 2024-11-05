@@ -1,4 +1,5 @@
 import os
+import urllib.parse
 from concurrent.futures import ThreadPoolExecutor
 
 import requests
@@ -80,3 +81,22 @@ class Google:
         except requests.RequestException as e:
             # Handle request errors
             raise ValueError(f"Failed to exchange code: {str(e)}")
+
+    @staticmethod
+    def get_auth_url():
+        redirect_uri = os.getenv("GOOGLE_REDIRECT_URI")
+        client_id = os.getenv("GOOGLE_CLIENT_ID")
+        scopes = [
+            "https://www.googleapis.com/auth/userinfo.email",
+            "https://www.googleapis.com/auth/userinfo.profile",
+            "openid",
+        ]
+        scope = urllib.parse.quote(" ".join(scopes))
+        url = (
+            f"https://accounts.google.com/o/oauth2/v2/auth?"
+            f"client_id={client_id}&"
+            f"redirect_uri={redirect_uri}&"
+            f"response_type=code&"
+            f"scope={scope}"
+        )
+        return url
