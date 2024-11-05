@@ -4,5 +4,5 @@ from .views import HomeView, CountryView
 
 urlpatterns = [
     path("", HomeView.as_view(), name="home"),
-    path("country/", CountryView.as_view(), name="country"),
+    path("api/v1/country/", CountryView.as_view(), name="country"),
 ]
