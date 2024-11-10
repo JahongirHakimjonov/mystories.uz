@@ -2,7 +2,7 @@ import os  # noqa
 from pathlib import Path
 
 from django.utils.translation import gettext_lazy as _
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv, find_dotenv  # noqa
 
 from core.config import *  # noqa
 
