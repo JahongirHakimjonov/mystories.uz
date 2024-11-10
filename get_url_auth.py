@@ -74,7 +74,7 @@ def get_google_code(client_id, redirect_uri, scopes):
         f"response_type=code&"
         f"scope={scope}"
     )
-    return url  # Return the URL without making a request
+    return url
 
 
 # Example usage

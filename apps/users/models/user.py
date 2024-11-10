@@ -1,10 +1,14 @@
+import io
+
+from PIL import Image
 from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.core.files.base import ContentFile
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.shared.models import AbstractBaseModel
 from apps.users.managers import UserManager
-from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class RoleChoices(models.TextChoices):
@@ -103,3 +107,16 @@ class User(AbstractUser, AbstractBaseModel):
     def tokens(self):
         refresh = RefreshToken.for_user(self)
         return {"refresh": str(refresh), "access": str(refresh.access_token)}
+
+    def save(self, *args, **kwargs):
+        if self.avatar:
+            img = Image.open(self.avatar)
+            if img.format != "WEBP":
+                img_io = io.BytesIO()
+                img.save(img_io, format="WEBP")
+                self.avatar.save(
+                    f"{self.avatar.name.split('.')[0]}.webp",
+                    ContentFile(img_io.getvalue()),
+                    save=False,
+                )
+        super().save(*args, **kwargs)
