@@ -1,5 +1,7 @@
+import os
+
 from django.contrib.auth.tokens import default_token_generator
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import status
@@ -45,9 +47,8 @@ class ActivateUserView(APIView):
         if user and default_token_generator.check_token(user, token):
             user.is_active = True
             user.save()
-            return JsonResponse(
-                {"message": "User activated successfully."}, status=status.HTTP_200_OK
-            )
+            url = os.getenv("FRONTEND_URL")
+            return HttpResponseRedirect(url)
         return JsonResponse(
             {"message": "Invalid activation link"}, status=status.HTTP_400_BAD_REQUEST
         )

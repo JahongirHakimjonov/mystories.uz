@@ -18,7 +18,7 @@ PAGES = [
         "seperator": True,
         "items": [
             {
-                "title": _("Bosh sahifa"),
+                "title": _("Home Page"),
                 "icon": "home",
                 "link": reverse_lazy("admin:index"),
             },
@@ -26,24 +26,84 @@ PAGES = [
     },
     {
         "seperator": True,
-        "title": _("Foydalanuvchilar"),
+        "title": _("Users"),
         "items": [
             {
-                "title": _("Guruhlar"),
-                "icon": "person_add",
+                "title": _("Groups"),
+                "icon": "groups",
                 "link": reverse_lazy("admin:auth_group_changelist"),
                 "permission": lambda request: user_has_group_or_permission(
                     request.user, "view_group"
                 ),
             },
-            # {
-            #     "title": _("Foydalanuvchilar"),
-            #     "icon": "person_add",
-            #     "link": reverse_lazy("admin:auth_user_changelist"),
-            #     "permission": lambda request: user_has_group_or_permission(
-            #         request.user, "view_user"
-            #     ),
-            # },
+            {
+                "title": _("Users"),
+                "icon": "person_add",
+                "link": reverse_lazy("admin:users_user_changelist"),
+                "permission": lambda request: user_has_group_or_permission(
+                    request.user, "view_user"
+                ),
+            },
+        ],
+    },
+    {
+        "seperator": True,
+        "title": _("Additional user data"),
+        "items": [
+            {
+                "title": _("User Data"),
+                "icon": "database",
+                "link": reverse_lazy("admin:users_userdata_changelist"),
+                "permission": lambda request: user_has_group_or_permission(
+                    request.user, "view_userdata"
+                ),
+            },
+            {
+                "title": _("Active Sessions"),
+                "icon": "visibility_lock",
+                "link": reverse_lazy("admin:users_activesessions_changelist"),
+                "permission": lambda request: user_has_group_or_permission(
+                    request.user, "view_activesessions"
+                ),
+            },
+            {
+                "title": _("Followers"),
+                "icon": "transfer_within_a_station",
+                "link": reverse_lazy("admin:users_follower_changelist"),
+                "permission": lambda request: user_has_group_or_permission(
+                    request.user, "view_follower"
+                ),
+            },
+        ],
+    },
+    {
+        "seperator": True,
+        "title": _("Post"),
+        "items": [
+            {
+                "title": _("Posts"),
+                "icon": "post_add",
+                "link": reverse_lazy("admin:mystories_post_changelist"),
+                "permission": lambda request: user_has_group_or_permission(
+                    request.user, "view_post"
+                ),
+            },
+            {
+                "title": _("Post themes"),
+                "icon": "menu_open",
+                "link": reverse_lazy("admin:mystories_theme_changelist"),
+                "permission": lambda request: user_has_group_or_permission(
+                    request.user, "view_theme"
+                ),
+            },
+            {
+                "title": _("Post tags"),
+                "icon": "sell",
+                "link": reverse_lazy("admin:mystories_tag_changelist"),
+                "permission": lambda request: user_has_group_or_permission(
+                    request.user, "view_tag"
+                ),
+            },
         ],
     },
 ]

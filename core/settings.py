@@ -90,7 +90,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = "uz"
+LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "Asia/Tashkent"
 

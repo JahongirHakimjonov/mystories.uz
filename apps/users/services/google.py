@@ -7,9 +7,8 @@ from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from google.auth.transport import requests as google_requests
 from google.oauth2 import id_token
-from rest_framework_simplejwt.tokens import RefreshToken
 
-from apps.users.models import RegisterTypeChoices
+from apps.users.models import RegisterTypeChoices, UserData
 from apps.users.services import RegisterService
 
 User = get_user_model()
@@ -51,7 +50,6 @@ class Google:
                         ),
                         "first_name": idinfo.get("given_name", ""),
                         "last_name": idinfo.get("family_name", ""),
-                        "avatar": idinfo.get("picture"),
                         "is_active": True,
                         "register_type": RegisterTypeChoices.GOOGLE,
                     },
@@ -62,19 +60,31 @@ class Google:
                     avatar_future = executor.submit(requests.get, idinfo["picture"])
                     avatar_response = avatar_future.result()
                     if avatar_response.status_code == 200:
+                        # Extract and sanitize the filename
+                        parsed_url = urllib.parse.urlparse(idinfo["picture"])
+                        filename = os.path.basename(parsed_url.path)
+                        sanitized_filename = f"{user.username}_avatar_{filename}"
+
                         user.avatar.save(
-                            f"{user.username}_avatar.jpg",
+                            sanitized_filename,
                             ContentFile(avatar_response.content),
                             save=False,
                         )
                         user.save()
 
+                # Create or update UserData
+                UserData.objects.update_or_create(
+                    user=user,
+                    defaults={
+                        "provider": RegisterTypeChoices.GOOGLE,
+                        "uid": idinfo["sub"],
+                        "extra_data": idinfo,
+                    },
+                )
+
                 # Generate JWT tokens
-                refresh = RefreshToken.for_user(user)
-                return {
-                    "refresh": str(refresh),
-                    "access": str(refresh.access_token),
-                }
+                token = user.tokens()
+                return token
         except ValueError as e:
             # Handle invalid token or expired token
             raise ValueError(f"Invalid token: {str(e)}")

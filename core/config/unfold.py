@@ -1,7 +1,7 @@
 from django.templatetags.static import static
+from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 
-# from django.utils.translation import gettext_lazy as _
-# from django.urls import reverse_lazy
 from . import unfold_navigation as navigation
 
 UNFOLD = {
@@ -24,7 +24,7 @@ UNFOLD = {
     "SHOW_HISTORY": True,
     "SHOW_VIEW_ON_SITE": True,
     "LOGIN": {
-        "image": lambda request: static("images/login.jpg"),
+        "image": lambda request: static("images/Rectangle.png"),
     },
     "STYLES": [
         lambda request: static("css/tailwind.css"),
@@ -65,4 +65,32 @@ UNFOLD = {
         "show_all_applications": True,
         "navigation": navigation.PAGES,
     },
+    "TABS": [
+        {
+            "models": [
+                "mystories.post",
+                "mystories.like",
+                "mystories.comment",
+                "mystories.saved",
+            ],
+            "items": [
+                {
+                    "title": _("Posts"),
+                    "link": reverse_lazy("admin:mystories_post_changelist"),
+                },
+                {
+                    "title": _("Likes"),
+                    "link": reverse_lazy("admin:mystories_like_changelist"),
+                },
+                {
+                    "title": _("Comments"),
+                    "link": reverse_lazy("admin:mystories_comment_changelist"),
+                },
+                {
+                    "title": _("Saved"),
+                    "link": reverse_lazy("admin:mystories_saved_changelist"),
+                },
+            ],
+        },
+    ],
 }
