@@ -15,8 +15,8 @@ services:
       - ${PORT:-8001}:8000
     depends_on:
       - db
-#      - rabbitmq
-#      - redis
+      - rabbitmq
+      - redis
 
   db:
     image: postgres:15-alpine
@@ -31,8 +31,8 @@ services:
 
 
   redis:
+    image: redis:latest
     restart: always
-    image: redis
 
   rabbitmq:
     image: rabbitmq:management

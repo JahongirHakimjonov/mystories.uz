@@ -4,9 +4,9 @@ from concurrent.futures import ThreadPoolExecutor
 import requests
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
-from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.users.models import RegisterTypeChoices
+from apps.users.models import UserData
 from apps.users.services.register import RegisterService
 
 User = get_user_model()
@@ -103,12 +103,19 @@ class Github:
                         )
                         user.save()
 
+                # Create or update UserData
+                UserData.objects.update_or_create(
+                    user=user,
+                    defaults={
+                        "provider": RegisterTypeChoices.GITHUB,
+                        "uid": user_info["id"],
+                        "extra_data": user_info,
+                    },
+                )
+
                 # Generate JWT tokens
-                refresh = RefreshToken.for_user(user)
-                return {
-                    "refresh": str(refresh),
-                    "access": str(refresh.access_token),
-                }
+                token = user.tokens()
+                return token
         except ValueError as e:
             # Handle invalid token or expired token
             raise ValueError(f"Invalid token: {str(e)}")
