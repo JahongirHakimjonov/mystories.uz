@@ -1,11 +1,12 @@
 import os
 
 from django.contrib.auth.tokens import default_token_generator
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import status
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.users.models import User
@@ -25,13 +26,13 @@ class RegisterView(APIView):
                 reverse("activate", kwargs={"uidb64": uid, "token": token})
             )
             send_activation_email.delay(user.email, activation_link)
-            return JsonResponse(
+            return Response(
                 {
                     "message": "User registered successfully. Please check your email to activate your account."
                 },
                 status=status.HTTP_201_CREATED,
             )
-        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ActivateUserView(APIView):
@@ -49,6 +50,6 @@ class ActivateUserView(APIView):
             user.save()
             url = os.getenv("FRONTEND_URL")
             return HttpResponseRedirect(url)
-        return JsonResponse(
+        return Response(
             {"message": "Invalid activation link"}, status=status.HTTP_400_BAD_REQUEST
         )

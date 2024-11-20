@@ -16,6 +16,8 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
     list_filter = ("role", "is_active")
     list_editable = ("is_active",)
     list_display_links = ("id", "username")
+    autocomplete_fields = ("country",)
+    list_per_page = 50
     fieldsets = (
         (None, {"fields": ("email", "password")}),
         (

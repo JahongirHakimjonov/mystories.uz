@@ -9,9 +9,9 @@ from core.config.swagger import urlpatterns as swagger_patterns
 urlpatterns = [
     path("", include("apps.shared.urls")),
     path("api/v1/", include("apps.users.urls")),
+    path("api/v1/", include("apps.mystories.urls")),
     path("admin/", admin.site.urls),
     path("i18n/", include("django.conf.urls.i18n")),
-    path("ckeditor5/", include("django_ckeditor_5.urls")),
     path("rosetta/", include("rosetta.urls")),
     # Media and static files
     re_path(r"static/(?P<path>.*)", serve, {"document_root": settings.STATIC_ROOT}),

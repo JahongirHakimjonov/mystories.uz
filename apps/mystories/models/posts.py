@@ -124,6 +124,13 @@ class Comment(AbstractBaseModel):
     def __str__(self):
         return f"{self.user} {self.post}"
 
+    def save(self, *args, **kwargs):
+        if self.post.comments.filter(user=self.user).count() >= 5:
+            raise ValueError(
+                "A user cannot write more than 5 comments on a single post."
+            )
+        super().save(*args, **kwargs)
+
 
 class Saved(AbstractBaseModel):
     post = models.ForeignKey(

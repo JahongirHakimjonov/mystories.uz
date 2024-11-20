@@ -28,6 +28,7 @@ class PostAdmin(ModelAdmin):
         "updated_at",
     ]
     autocomplete_fields = ["author", "tags", "theme"]
+    list_per_page = 50
 
 
 @admin.register(Like)
@@ -35,6 +36,8 @@ class LikeAdmin(ModelAdmin):
     list_display = ["id", "post", "user"]
     search_fields = ["post", "user"]
     list_filter = ["post", "user"]
+    autocomplete_fields = ["post", "user"]
+    list_per_page = 50
 
 
 @admin.register(Comment)
@@ -42,6 +45,8 @@ class CommentAdmin(ModelAdmin):
     list_display = ["id", "post", "user", "content"]
     search_fields = ["post", "user", "content"]
     list_filter = ["post", "user"]
+    autocomplete_fields = ["post", "user"]
+    list_per_page = 50
 
 
 @admin.register(Saved)
@@ -49,3 +54,5 @@ class SavedAdmin(ModelAdmin):
     list_display = ["id", "post", "user"]
     search_fields = ["post", "user"]
     list_filter = ["post", "user"]
+    autocomplete_fields = ["post", "user"]
+    list_per_page = 50

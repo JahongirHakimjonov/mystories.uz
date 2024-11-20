@@ -9,3 +9,5 @@ class FollowerAdmin(ModelAdmin):
     list_display = ["id", "follower", "created_at"]
     search_fields = ["follower__username"]
     list_filter = ["created_at"]
+    autocomplete_fields = ["follower", "following"]
+    list_per_page = 50
