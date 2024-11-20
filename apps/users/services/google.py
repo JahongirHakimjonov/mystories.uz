@@ -1,17 +1,16 @@
 import os
 import urllib.parse
 from concurrent.futures import ThreadPoolExecutor
+from io import BytesIO
 
 import requests
-from django.contrib.auth import get_user_model
+from PIL import Image
 from django.core.files.base import ContentFile
 from google.auth.transport import requests as google_requests
 from google.oauth2 import id_token
 
-from apps.users.models import RegisterTypeChoices, UserData
+from apps.users.models import RegisterTypeChoices, UserData, User
 from apps.users.services import RegisterService
-
-User = get_user_model()
 
 
 class Google:
@@ -23,7 +22,7 @@ class Google:
                 token_future = executor.submit(
                     requests.post,
                     "https://oauth2.googleapis.com/token",
-                    data={
+                    json={
                         "code": code,
                         "client_id": os.getenv("GOOGLE_CLIENT_ID"),
                         "client_secret": os.getenv("GOOGLE_CLIENT_SECRET"),
@@ -60,14 +59,22 @@ class Google:
                     avatar_future = executor.submit(requests.get, idinfo["picture"])
                     avatar_response = avatar_future.result()
                     if avatar_response.status_code == 200:
+                        # Convert the image to WebP format
+                        image = Image.open(BytesIO(avatar_response.content))
+                        webp_image_io = BytesIO()
+                        image.save(webp_image_io, format="WEBP")
+                        webp_image_io.seek(0)
+
                         # Extract and sanitize the filename
                         parsed_url = urllib.parse.urlparse(idinfo["picture"])
                         filename = os.path.basename(parsed_url.path)
-                        sanitized_filename = f"{user.username}_avatar_{filename}"
+                        sanitized_filename = (
+                            f"{user.username}_avatar_{filename.split('.')[0]}.webp"
+                        )
 
                         user.avatar.save(
                             sanitized_filename,
-                            ContentFile(avatar_response.content),
+                            ContentFile(webp_image_io.read()),
                             save=False,
                         )
                         user.save()

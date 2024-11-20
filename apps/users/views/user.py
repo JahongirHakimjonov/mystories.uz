@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.users.serializers import UpdateAvatarSerializer, UpdateUserSerializer
@@ -11,7 +11,7 @@ class UpdateAvatarView(APIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         updated_instance = serializer.update(request.user, serializer.validated_data)
-        return JsonResponse(self.serializer_class(updated_instance).data)
+        return Response(self.serializer_class(updated_instance).data)
 
 
 class UpdateUserView(APIView):
@@ -21,4 +21,4 @@ class UpdateUserView(APIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         updated_instance = serializer.update(request.user, serializer.validated_data)
-        return JsonResponse(self.serializer_class(updated_instance).data)
+        return Response(self.serializer_class(updated_instance).data)

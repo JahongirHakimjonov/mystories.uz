@@ -1,15 +1,15 @@
 import os
 from concurrent.futures import ThreadPoolExecutor
+from io import BytesIO
 
 import requests
-from django.contrib.auth import get_user_model
+from PIL import Image
 from django.core.files.base import ContentFile
 
 from apps.users.models import RegisterTypeChoices
+from apps.users.models import User
 from apps.users.models import UserData
 from apps.users.services.register import RegisterService
-
-User = get_user_model()
 
 
 class Github:
@@ -21,7 +21,7 @@ class Github:
                 token_future = executor.submit(
                     requests.post,
                     "https://github.com/login/oauth/access_token",
-                    data={
+                    json={
                         "client_id": os.getenv("GITHUB_CLIENT_ID"),
                         "client_secret": os.getenv("GITHUB_CLIENT_SECRET"),
                         "code": code,
@@ -96,9 +96,15 @@ class Github:
                     )
                     avatar_response = avatar_future.result()
                     if avatar_response.status_code == 200:
+                        # Convert the image to WebP format
+                        image = Image.open(BytesIO(avatar_response.content))
+                        webp_image_io = BytesIO()
+                        image.save(webp_image_io, format="WEBP")
+                        webp_image_io.seek(0)
+
                         user.avatar.save(
-                            f"{user.username}_avatar.jpg",
-                            ContentFile(avatar_response.content),
+                            f"{user.username}_avatar.webp",
+                            ContentFile(webp_image_io.read()),
                             save=False,
                         )
                         user.save()

@@ -2,10 +2,11 @@ import os
 
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
-from django.http import JsonResponse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from rest_framework import status
+from rest_framework.generics import GenericAPIView
+from rest_framework.response import Response
 
 from apps.users.serializers import (
     ChangePasswordSerializer,
@@ -13,9 +14,6 @@ from apps.users.serializers import (
     ChangePasswordConfirmSerializer,
 )
 from apps.users.tasks import send_reset_email_task
-
-
-from rest_framework.generics import GenericAPIView
 
 
 class ChangePasswordView(GenericAPIView):
@@ -27,7 +25,7 @@ class ChangePasswordView(GenericAPIView):
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return JsonResponse({"detail": "Password changed successfully."})
+        return Response({"detail": "Password changed successfully."})
 
 
 class PasswordResetView(GenericAPIView):
@@ -43,7 +41,7 @@ class PasswordResetView(GenericAPIView):
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             frontend_url = os.getenv("FRONTEND_URL")
             send_reset_email_task.delay(user.email, frontend_url, uid, token)
-        return JsonResponse(
+        return Response(
             {
                 "message": "If an account with that email exists, a password reset link has been sent."
             },
@@ -66,7 +64,7 @@ class PasswordResetConfirmView(GenericAPIView):
             )
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            return JsonResponse({"detail": "Password changed successfully."})
-        return JsonResponse(
+            return Response({"detail": "Password changed successfully."})
+        return Response(
             {"message": "Invalid reset link."}, status=status.HTTP_400_BAD_REQUEST
         )
