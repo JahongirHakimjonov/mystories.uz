@@ -1,6 +1,5 @@
 from django.urls import path
 from rest_framework_simplejwt.views import (
-    TokenRefreshView,
     TokenVerifyView,
 )
 
@@ -17,6 +16,8 @@ from apps.users.views import (
     PasswordResetConfirmView,
     UpdateAvatarView,
     UpdateUserView,
+    CustomTokenRefreshView,
+    BlockSessionView,
 )
 
 urlpatterns = [
@@ -37,8 +38,9 @@ urlpatterns = [
         "auth/activate/<uidb64>/<token>/", ActivateUserView.as_view(), name="activate"
     ),
     path("auth/token/", CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("auth/token/refresh/", CustomTokenRefreshView.as_view(), name="token_refresh"),
     path("auth/token/verify/", TokenVerifyView.as_view(), name="token_verify"),
+    path("auth/session/block/", BlockSessionView.as_view(), name="block_session"),
     path(
         "auth/<str:provider_name>/callback/",
         SocialAuthView.as_view(),
