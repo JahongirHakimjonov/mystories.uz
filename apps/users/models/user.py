@@ -86,7 +86,11 @@ class User(AbstractUser, AbstractBaseModel):
 
     def tokens(self):
         refresh = RefreshToken.for_user(self)
-        return {"refresh": str(refresh), "access": str(refresh.access_token)}
+        return {
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+            "user": self.id,
+        }
 
     def save(self, *args, **kwargs):
         if self.avatar:
@@ -135,9 +139,7 @@ class ActiveSessions(AbstractBaseModel):
     )
     ip = models.GenericIPAddressField(db_index=True, verbose_name=_("IP address"))
     user_agent = models.TextField(verbose_name=_("User agent"), db_index=True)
-    location = models.CharField(
-        max_length=255, verbose_name=_("Location"), db_index=True
-    )
+    location = models.JSONField(verbose_name=_("Location"), null=True, blank=True)
     last_activity = models.DateTimeField(
         auto_now=True, verbose_name=_("Last activity"), db_index=True
     )
@@ -148,15 +150,8 @@ class ActiveSessions(AbstractBaseModel):
         blank=True,
         db_index=True,
     )
-    refresh_token = models.CharField(
-        max_length=255, verbose_name=_("Refresh token"), db_index=True
-    )
-    access_token = models.CharField(
-        max_length=255, verbose_name=_("Access token"), db_index=True
-    )
-    data = models.JSONField(
-        verbose_name=_("DATA"), null=True, blank=True, db_index=True
-    )
+    refresh_token = models.TextField(verbose_name=_("Refresh token"), db_index=True)
+    access_token = models.TextField(verbose_name=_("Access token"), db_index=True)
     is_active = models.BooleanField(default=True, verbose_name=_("Is active"))
 
     class Meta:
