@@ -35,4 +35,17 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         return {
             "refresh": str(token),
             "access": str(token.access_token),
+            "user": user.id,
         }
+
+
+class CustomTokenRefreshSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
+
+    def validate(self, attrs):
+        refresh = attrs.get("refresh")
+
+        if refresh is None:
+            raise serializers.ValidationError("No refresh token provided")
+
+        return {"refresh": refresh}

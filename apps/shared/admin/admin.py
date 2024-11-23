@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import GroupAdmin as BaseGroupAdmin
 from django.contrib.auth.models import Group
+from import_export.admin import ImportExportModelAdmin
 from unfold.admin import ModelAdmin
 
 from apps.shared.models import Country
@@ -17,7 +18,7 @@ class GroupAdmin(BaseGroupAdmin, ModelAdmin):
 
 
 @admin.register(Country)
-class CountryAdmin(ModelAdmin):
+class CountryAdmin(ModelAdmin, ImportExportModelAdmin):
     list_display = ("name", "code", "created_at", "updated_at")
     search_fields = ("name", "code")
     list_per_page = 50

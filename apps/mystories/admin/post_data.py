@@ -9,7 +9,6 @@ class TagAdmin(ModelAdmin):
     list_display = ["id", "theme", "name", "is_active"]
     search_fields = ["name"]
     list_filter = ["is_active"]
-    raw_id_fields = ["theme"]
     autocomplete_fields = ["theme"]
     list_per_page = 50
 

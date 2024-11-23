@@ -45,3 +45,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
             "last_name": instance.last_name,
             "country": CountrySerializer(instance.country).data,
         }
+
+
+class BlockSessionSerializer(serializers.Serializer):
+    session_id = serializers.IntegerField()
