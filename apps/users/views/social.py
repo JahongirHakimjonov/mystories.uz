@@ -15,7 +15,8 @@ class SocialAuthView(APIView):
     permission_classes = [AllowAny]
     throttle_classes = [UserRateThrottle]
 
-    def post(self, request, provider_name, *args, **kwargs):
+    @staticmethod
+    def post(request, provider_name, *args, **kwargs):
         """
         Handle OAuth authentication for supported providers.
         """
@@ -55,13 +56,14 @@ class SocialAuthView(APIView):
             return Response(jwt_token, status=status.HTTP_200_OK)
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception:
+        except Exception as e:
             return Response(
-                {"error": "Authentication failed"},
+                {"error": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
-    def get(self, request, provider_name, *args, **kwargs):
+    @staticmethod
+    def get(request, provider_name, *args, **kwargs):
         """
         Redirect to the provider's authentication URL.
         """
@@ -76,8 +78,8 @@ class SocialAuthView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             return HttpResponseRedirect(url)
-        except Exception:
+        except Exception as e:
             return Response(
-                {"error": "Failed to get auth URL"},
+                {"error": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )

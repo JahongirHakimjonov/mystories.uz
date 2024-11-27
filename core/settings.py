@@ -91,7 +91,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "en"
 
 TIME_ZONE = "Asia/Tashkent"
 
@@ -100,9 +100,9 @@ USE_I18N = True
 USE_TZ = True
 
 LANGUAGES = (
-    ("ru", _("Russia")),
+    # ("ru", _("Russia")),
     ("en", _("English")),
-    ("uz", _("Uzbek")),
+    ("de", _("Uzbek")),
 )
 
 LOCALE_PATHS = [os.path.join(BASE_DIR, "locale")]

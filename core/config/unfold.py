@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from . import unfold_navigation as navigation
 
 
-def environment_callback(request):
+def environment_callback(request):  # noqa
     """
     Callback has to return a list of two values represeting text value and the color
     type of the label displayed in top right corner.
@@ -34,6 +34,7 @@ UNFOLD = {
     "SITE_SYMBOL": "speed",
     "SHOW_HISTORY": True,
     "SHOW_VIEW_ON_SITE": True,
+    "SHOW_LANGUAGES": True,
     "ENVIRONMENT": "core.config.unfold.environment_callback",
     "LOGIN": {
         "image": lambda request: static("images/Rectangle.png"),

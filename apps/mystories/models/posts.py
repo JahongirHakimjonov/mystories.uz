@@ -12,7 +12,7 @@ from apps.shared.models import AbstractBaseModel
 
 class Post(AbstractBaseModel):
     title = models.CharField(max_length=255, verbose_name=_("Title"), db_index=True)
-    content = models.TextField(verbose_name=_("Content"), db_index=True)
+    content = models.JSONField(verbose_name=_("Content"), db_index=True)
     banner = models.ImageField(upload_to="posts", verbose_name=_("Banner"))
     author = models.ForeignKey(
         "users.User",

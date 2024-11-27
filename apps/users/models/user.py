@@ -153,6 +153,7 @@ class ActiveSessions(AbstractBaseModel):
     refresh_token = models.TextField(verbose_name=_("Refresh token"), db_index=True)
     access_token = models.TextField(verbose_name=_("Access token"), db_index=True)
     is_active = models.BooleanField(default=True, verbose_name=_("Is active"))
+    data = models.JSONField(verbose_name=_("Data"), null=True, blank=True)
 
     class Meta:
         verbose_name = _("Active session")
