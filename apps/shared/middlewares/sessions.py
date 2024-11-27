@@ -6,10 +6,12 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from apps.users.models import ActiveSessions
+from apps.users.services import RegisterService
 
 
 class CheckActiveSessionMiddleware(MiddlewareMixin):
-    def process_request(self, request):
+    @staticmethod
+    def process_request(request):
         """
         Middleware to check active sessions and update session information.
         """
@@ -25,6 +27,11 @@ class CheckActiveSessionMiddleware(MiddlewareMixin):
                 ).first()
                 if session:
                     session.last_activity = timezone.now()
+                    session.ip_address = RegisterService.get_client_ip(request)
+                    session.location = RegisterService.get_location(session.ip_address)
+                    session.user_agent = request.META.get(
+                        "HTTP_USER_AGENT", "Unknown User Agent"
+                    )
                     if fcm_token:
                         session.fcm_token = fcm_token
                     session.save()
@@ -40,9 +47,9 @@ class CheckActiveSessionMiddleware(MiddlewareMixin):
                     )
         except AuthenticationFailed as e:
             return JsonResponse({"error": str(e)}, status=status.HTTP_401_UNAUTHORIZED)
-        except Exception:
+        except Exception as e:
             return JsonResponse(
-                {"error": "An unexpected error occurred."},
+                {"error": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         return None

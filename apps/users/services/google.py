@@ -29,6 +29,7 @@ class Google:
                         "redirect_uri": os.getenv("GOOGLE_REDIRECT_URI"),
                         "grant_type": "authorization_code",
                     },
+                    data={},
                 )
                 token_response = token_future.result()
                 token_response.raise_for_status()
@@ -56,7 +57,9 @@ class Google:
 
                 if created and idinfo.get("picture"):
                     # Save the avatar if the user is created and the avatar is provided
-                    avatar_future = executor.submit(requests.get, idinfo["picture"])
+                    avatar_future = executor.submit(
+                        requests.get, idinfo["picture"], params={}
+                    )
                     avatar_response = avatar_future.result()
                     if avatar_response.status_code == 200:
                         # Convert the image to WebP format

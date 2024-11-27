@@ -28,6 +28,7 @@ class Github:
                         "redirect_uri": os.getenv("GITHUB_REDIRECT_URI"),
                     },
                     headers={"Accept": "application/json"},
+                    data={},
                 )
                 token_response = token_future.result()
                 token_response.raise_for_status()
@@ -44,6 +45,7 @@ class Github:
                     requests.get,
                     "https://api.github.com/user",
                     headers={"Authorization": f"token {access_token}"},
+                    params={},
                 )
                 user_info_response = user_info_future.result()
                 user_info_response.raise_for_status()
@@ -57,6 +59,7 @@ class Github:
                         requests.get,
                         "https://api.github.com/user/emails",
                         headers={"Authorization": f"token {access_token}"},
+                        params={},
                     )
                     emails_response = emails_future.result()
                     emails_response.raise_for_status()
@@ -92,7 +95,7 @@ class Github:
                 if created and user_info.get("avatar_url"):
                     # Save the avatar if the user is created and the avatar is provided
                     avatar_future = executor.submit(
-                        requests.get, user_info["avatar_url"]
+                        requests.get, user_info["avatar_url"], params={}
                     )
                     avatar_response = avatar_future.result()
                     if avatar_response.status_code == 200:

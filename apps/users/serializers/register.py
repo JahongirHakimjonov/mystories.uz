@@ -22,12 +22,14 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         return attrs
 
-    def validate_email(self, email):
+    @staticmethod
+    def validate_email(email):
         if User.objects.filter(email=email).exists():
             raise serializers.ValidationError("User with this email already exists")
         return email
 
-    def validate_username(self, username):
+    @staticmethod
+    def validate_username(username):
         if User.objects.filter(username=username).exists():
             raise serializers.ValidationError("User with this username already exists")
         return username

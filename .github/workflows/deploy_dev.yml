@@ -20,8 +20,8 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd ${{ secrets.DEPLOY_PATH }}
-            git pull origin main
+            cd ${{ secrets.DEV_DEPLOY_PATH }}
+            git pull origin dev
             docker compose up -d --build
             docker image prune -f
             echo "Deploy jarayoni muvaffaqiyatli yakunlandi!"

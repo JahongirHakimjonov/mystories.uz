@@ -119,7 +119,8 @@ class CommentApiView(APIView):
 class CommentDeleteApiView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def delete(self, request, pk):
+    @staticmethod
+    def delete(request, pk):
         comment = Comment.objects.filter(pk=pk, user=request.user).first()
         if comment:
             comment.delete()

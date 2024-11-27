@@ -23,8 +23,8 @@ class RegisterService:
             response = requests.get(f"http://ip-api.com/json/{ip_address}")
             data = response.json()
             return data
-        except Exception:
-            return None
+        except Exception as e:
+            return {"error": str(e)}
 
     @staticmethod
     def filter_meta(meta):

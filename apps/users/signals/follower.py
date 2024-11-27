@@ -5,7 +5,7 @@ from apps.users.models import Follower
 
 
 @receiver(post_save, sender=Follower)
-def increment_follow_counts(sender, instance, created, **kwargs):
+def increment_follow_counts(sender, instance, created, **kwargs):  # noqa
     if created:
         instance.follower.following_count += 1
         instance.follower.save()
@@ -14,7 +14,7 @@ def increment_follow_counts(sender, instance, created, **kwargs):
 
 
 @receiver(post_delete, sender=Follower)
-def decrement_follow_counts(sender, instance, **kwargs):
+def decrement_follow_counts(sender, instance, **kwargs):  # noqa
     instance.follower.following_count -= 1
     instance.follower.save()
     instance.following.follower_count -= 1

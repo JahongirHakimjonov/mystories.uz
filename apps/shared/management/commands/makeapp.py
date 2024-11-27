@@ -41,9 +41,9 @@ class Command(BaseCommand):
         with open(urls_file_path, "w") as file:
             file.write("from django.urls import path\n\nurlpatterns = []\n")
 
-        def create_package(package_name):
-            os.makedirs(package_name, exist_ok=True)
-            with open(os.path.join(package_name, "__init__.py"), "w"):
+        def create_package(pkg_name):
+            os.makedirs(pkg_name, exist_ok=True)
+            with open(os.path.join(pkg_name, "__init__.py"), "w"):
                 pass
 
         for package_name in ["models", "views", "admin", "serializers", "tests"]:
