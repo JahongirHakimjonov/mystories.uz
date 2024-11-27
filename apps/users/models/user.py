@@ -124,6 +124,7 @@ class UserData(AbstractBaseModel):
             models.Index(fields=["provider"]),
             models.Index(fields=["uid"]),
         ]
+        ordering = ["-created_at"]
 
     def __str__(self):
         return (
@@ -159,3 +160,7 @@ class ActiveSessions(AbstractBaseModel):
         verbose_name = _("Active session")
         verbose_name_plural = _("Active sessions")
         db_table = "active_sessions"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.user.username} {self.ip}" if self.user else str(_("Session"))
