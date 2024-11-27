@@ -124,6 +124,7 @@ class UserData(AbstractBaseModel):
             models.Index(fields=["provider"]),
             models.Index(fields=["uid"]),
         ]
+        ordering = ["-created_at"]
 
     def __str__(self):
         return (
@@ -153,8 +154,13 @@ class ActiveSessions(AbstractBaseModel):
     refresh_token = models.TextField(verbose_name=_("Refresh token"), db_index=True)
     access_token = models.TextField(verbose_name=_("Access token"), db_index=True)
     is_active = models.BooleanField(default=True, verbose_name=_("Is active"))
+    data = models.JSONField(verbose_name=_("Data"), null=True, blank=True)
 
     class Meta:
         verbose_name = _("Active session")
         verbose_name_plural = _("Active sessions")
         db_table = "active_sessions"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.user.username} {self.ip}" if self.user else str(_("Session"))

@@ -63,8 +63,10 @@ class CustomTokenRefreshView(APIView):
                 )
 
             new_access_token = str(token.access_token)
+            # new_refresh_token = str(token)
 
             session.access_token = new_access_token
+            # session.refresh_token = new_refresh_token
             session.save()
 
             return Response({"access": new_access_token}, status=status.HTTP_200_OK)

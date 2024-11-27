@@ -15,7 +15,8 @@ class CountryView(APIView):
     serializer_class = CountrySerializer
     permission_classes = [AllowAny]
 
-    def get_queryset(self):
+    @staticmethod
+    def get_queryset():
         return Country.objects.all()
 
     def get(self, request):

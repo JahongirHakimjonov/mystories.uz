@@ -21,10 +21,8 @@ services:
   db:
     image: postgres:15-alpine
     restart: always
-    environment:
-      POSTGRES_DB: mystories
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: '1253'
+    env_file:
+      - .env
     volumes:
       - pg_data:/var/lib/postgresql/data
 
@@ -39,12 +37,12 @@ services:
     env_file:
       - .env
     restart: always
-    container_name: rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
     ports:
       - ${RABBITMQ_PORT:-15672}:15672
+      - ${AMQP_PORT:-5672}:5672
     volumes:
       - rabbitmq:/var/lib/rabbitmq
 
@@ -54,7 +52,6 @@ services:
     build:
       context: .
       dockerfile: ./deployments/compose/django/Dockerfile
-    image: celery_worker
     command: /start-celeryworker
     restart: always
     volumes:

@@ -55,26 +55,26 @@ TEMPLATES = [
     },
 ]
 
-# WSGI_APPLICATION = "core.wsgi.application"
+WSGI_APPLICATION = "core.wsgi.application"
 ASGI_APPLICATION = "core.asgi.application"
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
 
 # DATABASES = {
 #     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": os.getenv("POSTGRES_DB"),
-#         "USER": os.getenv("POSTGRES_USER"),
-#         "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-#         "HOST": os.getenv("POSTGRES_HOST"),
-#         "PORT": os.getenv("POSTGRES_PORT"),
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
 #     }
 # }
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("POSTGRES_DB"),
+        "USER": os.getenv("POSTGRES_USER"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "HOST": os.getenv("POSTGRES_HOST"),
+        "PORT": os.getenv("POSTGRES_PORT"),
+    }
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -91,7 +91,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "en"
 
 TIME_ZONE = "Asia/Tashkent"
 
@@ -100,9 +100,9 @@ USE_I18N = True
 USE_TZ = True
 
 LANGUAGES = (
-    ("ru", _("Russia")),
+    # ("ru", _("Russia")),
     ("en", _("English")),
-    ("uz", _("Uzbek")),
+    ("de", _("Uzbek")),
 )
 
 LOCALE_PATHS = [os.path.join(BASE_DIR, "locale")]
