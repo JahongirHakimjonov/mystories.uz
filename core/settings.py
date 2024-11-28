@@ -99,11 +99,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-LANGUAGES = (
-    # ("ru", _("Russia")),
-    ("en", _("English")),
-    ("de", _("Uzbek")),
-)
+LANGUAGES = (("en", _("English")),)
 
 LOCALE_PATHS = [os.path.join(BASE_DIR, "locale")]
 
@@ -114,9 +110,6 @@ MODELTRANSLATION_DEFAULT_LANGUAGE = "uz"
 STATIC_URL = "static/"
 STATICFILES_DIRS = [str(BASE_DIR.joinpath("assets/static"))]
 STATIC_ROOT = str(BASE_DIR.joinpath("assets/staticfiles"))
-
-MEDIA_URL = "media/"
-MEDIA_ROOT = str(BASE_DIR.joinpath("assets/media"))
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
