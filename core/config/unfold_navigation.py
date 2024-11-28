@@ -108,4 +108,27 @@ PAGES = [
             },
         ],
     },
+    {
+        "seperator": True,
+        "collapsible": True,
+        "title": _("Additional"),
+        "items": [
+            {
+                "title": _("Notifications"),
+                "icon": "notifications",
+                "link": reverse_lazy("admin:mystories_notification_changelist"),
+                "permission": lambda request: user_has_group_or_permission(
+                    request.user, "view_group"
+                ),
+            },
+            {
+                "title": _("Countries"),
+                "icon": "flag",
+                "link": reverse_lazy("admin:shared_country_changelist"),
+                "permission": lambda request: user_has_group_or_permission(
+                    request.user, "view_user"
+                ),
+            },
+        ],
+    },
 ]
