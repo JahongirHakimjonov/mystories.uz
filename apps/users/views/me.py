@@ -11,6 +11,6 @@ class MeView(GenericAPIView):
     serializer_class = MeSerializer
 
     def get(self, request):
-        user = User.objects.get(pk=request.user.pk)
+        user = User.objects.select_related("country").get(pk=request.user.pk)
         serializer = self.get_serializer(user)
         return Response(serializer.data)
