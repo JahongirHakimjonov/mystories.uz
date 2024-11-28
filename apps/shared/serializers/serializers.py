@@ -5,5 +5,5 @@ from apps.shared.models import Country
 
 class CountrySerializer(serializers.ModelSerializer):
     class Meta:
-        fields = "__all__"
+        fields = ("id", "name", "code")
         model = Country

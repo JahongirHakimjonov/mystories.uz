@@ -99,11 +99,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-LANGUAGES = (
-    # ("ru", _("Russia")),
-    ("en", _("English")),
-    ("de", _("Uzbek")),
-)
+LANGUAGES = (("en", _("English")),)
 
 LOCALE_PATHS = [os.path.join(BASE_DIR, "locale")]
 
@@ -111,12 +107,9 @@ MODELTRANSLATION_LANGUAGES = ("uz", "ru", "en")
 
 MODELTRANSLATION_DEFAULT_LANGUAGE = "uz"
 
-# STATIC_URL = f"https://eu2.contabostorage.com/799cabf6462740dcb4b79fda130c1355:mystories/static/"
-# STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-# Add this line to set the STATIC_ROOT
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-# MEDIA_URL = f"https://eu2.contabostorage.com/799cabf6462740dcb4b79fda130c1355:mystories/media/"
-# DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+STATIC_URL = "static/"
+STATICFILES_DIRS = [str(BASE_DIR.joinpath("assets/static"))]
+STATIC_ROOT = str(BASE_DIR.joinpath("assets/staticfiles"))
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
