@@ -11,6 +11,12 @@ class Notification(AbstractBaseModel):
         related_name="notifications",
         verbose_name=_("User"),
     )
+    banner = models.FileField(
+        upload_to="notifications",
+        null=True,
+        blank=True,
+        verbose_name=_("Banner"),
+    )
     title = models.CharField(max_length=255, db_index=True, verbose_name=_("Title"))
     message = models.TextField(db_index=True, verbose_name=_("Message"))
     is_send = models.BooleanField(default=False, verbose_name=_("Is Send"))
