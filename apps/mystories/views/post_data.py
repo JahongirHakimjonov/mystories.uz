@@ -118,6 +118,7 @@ class CommentApiView(APIView):
 
 class CommentDeleteApiView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = CommentSerializer
 
     @staticmethod
     def delete(request, pk):
@@ -132,3 +133,9 @@ class CommentDeleteApiView(APIView):
             {"detail": "Comment not found."},
             status=status.HTTP_404_NOT_FOUND,
         )
+
+    @staticmethod
+    def get(self, request, pk):
+        comments = Comment.objects.filter(post=pk)
+        serializer = self.serializer_class(comments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
