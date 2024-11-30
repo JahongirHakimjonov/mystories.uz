@@ -4,6 +4,11 @@ from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv(".env"))
 
+
+class MediaStorage:
+    pass
+
+
 AWS_ACCESS_KEY_ID = os.getenv("S3_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("S3_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = os.getenv("S3_BUCKET_NAME", "mystories")

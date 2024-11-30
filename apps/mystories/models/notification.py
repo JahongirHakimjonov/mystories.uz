@@ -1,3 +1,7 @@
+import io
+
+from PIL import Image
+from django.core.files.base import ContentFile
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -30,3 +34,16 @@ class Notification(AbstractBaseModel):
 
     def __str__(self):
         return self.message
+
+    def save(self, *args, **kwargs):
+        if self.banner:
+            img = Image.open(self.banner)
+            if img.format != "WEBP":
+                img_io = io.BytesIO()
+                img.save(img_io, format="WEBP", quality=100)
+                self.banner.save(
+                    f"{self.banner.name.split('.')[0]}.webp",
+                    ContentFile(img_io.getvalue()),
+                    save=False,
+                )
+        super().save(*args, **kwargs)

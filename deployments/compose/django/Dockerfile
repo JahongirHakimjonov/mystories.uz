@@ -26,7 +26,32 @@ RUN sed -i 's/\r$//g' /start-celeryworker && \
 #    chmod +x /start-flower
 
 # Update and install necessary packages
-RUN apt update && apt upgrade -y && apt install git -y && apt install -y gettext
+RUN apt-get update && apt-get install -y \
+    libnss3 \
+    libxss1 \
+    libappindicator1 \
+    libindicator7 \
+    fonts-liberation \
+    wget \
+    unzip \
+    gnupg \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy pre-downloaded ChromeDriver to the image
+#COPY path/to/your/local/chromedriver /usr/local/bin/chromedriver
+
+# Install Google Chrome
+RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable
+
+# Ensure ChromeDriver is in PATH
+ENV PATH="/usr/local/bin/chromedriver:$PATH"
+
+# Set display port to avoid crash
+ENV DISPLAY=:99
+
 
 WORKDIR /app
 COPY . /app

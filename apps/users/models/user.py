@@ -92,7 +92,12 @@ class User(AbstractUser, AbstractBaseModel):
             "user": self.id,
         }
 
+    def clean(self):
+        if self.avatar and not self.avatar.storage.exists(self.avatar.name):
+            self.avatar = None
+
     def save(self, *args, **kwargs):
+        self.clean()
         if self.avatar:
             img = Image.open(self.avatar)
             if img.format != "WEBP":
