@@ -11,6 +11,10 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.webdriver import WebDriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 from apps.mystories.models import Notification
 from apps.users.models import ActiveSessions
@@ -61,12 +65,15 @@ def create_map_screenshot_and_notify(session_id):
                 options.add_argument("--hide-scrollbars")
 
                 service = Service()
-                driver = webdriver.Chrome(service=service, options=options)
+                driver = WebDriver(service=service, options=options)
 
                 try:
                     driver.get(f"file://{os.path.abspath(map_html)}")
-                    time.sleep(5)
+                    WebDriverWait(driver, 500).until(  # Increase timeout to 300 seconds
+                        EC.presence_of_element_located((By.TAG_NAME, "body"))
+                    )
                     driver.set_window_size(1920, 1080)
+                    time.sleep(10)  # Add a 10 second delay to ensure full rendering
                     driver.save_screenshot(screenshot_path)
                     logger.info(f"Screenshot saved to {screenshot_path}")
                 finally:
