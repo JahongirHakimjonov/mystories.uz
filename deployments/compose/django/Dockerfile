@@ -35,7 +35,6 @@ COPY . /app
 RUN --mount=type=cache,id=custom-pip,target=/root/.cache/pip \
     pip install --upgrade pip && \
     pip install -r /app/requirements.txt && \
-    pip install gunicorn && \
     pip install uvicorn
 
 # Copy and set permissions for entrypoint script
