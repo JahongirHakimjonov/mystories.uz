@@ -1,11 +1,19 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+from apps.mystories.models import Notification
 from apps.users.models import ActiveSessions
-from apps.users.tasks import create_map_screenshot_and_notify
 
 
 @receiver(post_save, sender=ActiveSessions)
 def increment_active_sessions(sender, instance, created, **kwargs):
     if created:
-        create_map_screenshot_and_notify.delay(instance.id)
+        Notification.objects.create(
+            user=instance.user,
+            title_uz="Yangi qurilma orqali kirdingiz",
+            title_ru="Вы вошли с нового устройства",
+            title_en="You have logged in from a new device",
+            message_uz="Siz yangi qurilma orqali kirdingiz.",
+            message_ru="Вы вошли с нового устройства.",
+            message_en="You have logged in from a new device.",
+        )
