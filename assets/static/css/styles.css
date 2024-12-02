@@ -15,6 +15,7 @@ body {
   background: linear-gradient(45deg, #1e293b, #0f172a, #334155);
   background-size: 300% 300%;
   animation: gradient-animation 8s ease infinite;
+  overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
 /* Header */
@@ -68,6 +69,41 @@ body {
   color: #10b981;
   text-shadow: 0 0 10px #10b981, 0 0 20px #10b981;
   transition: 0.3s;
+}
+
+/* Toggle Button Styles */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  width: 35px;
+  height: 30px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 200;
+  transition: all 0.3s ease-in-out;
+}
+
+.menu-toggle .bar {
+  width: 35px;
+  height: 5px;
+  background-color: #fff;
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out;
+}
+
+.menu-toggle.active .bar:nth-child(1) {
+  transform: rotate(45deg) translateY(8px);
+}
+
+.menu-toggle.active .bar:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle.active .bar:nth-child(3) {
+  transform: rotate(-45deg) translateY(-8px);
 }
 
 /* Main Content */
@@ -162,21 +198,79 @@ p {
   100% { background-position: 0% 50%; }
 }
 
-@media (max-width: 768px) {
+/* Media Queries for Responsiveness */
+@media (max-width: 1024px) {
   .logo {
     font-size: 24px;
   }
   .nav-links {
-    gap: 15px;
+    gap: 20px;
   }
   .nav-links li {
     font-size: 16px;
   }
   .main-content {
-    padding: 30px 20px;
+    padding: 40px 20px;
   }
   h1 {
-    font-size: 40px;
+    font-size: 48px;
+  }
+}
+
+@media (max-width: 768px) {
+  .logo {
+    font-size: 22px;
+  }
+  .nav-links {
+    gap: 15px;
+    display: none; /* Hide navigation menu by default */
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background: #111827;
+    width: 100%;
+    padding: 20px 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+  .nav-links li {
+    font-size: 16px;
+    text-align: center;
+  }
+  .nav-links a {
+    padding: 10px;
+  }
+  .navbar {
+    position: relative;
+  }
+  .navbar .menu-toggle {
+    display: flex;
+  }
+  .nav-links.show {
+    display: flex; /* Show the menu when toggled */
+  }
+  h1 {
+    font-size: 36px;
+  }
+  .buttons .btn {
+    font-size: 16px;
+    padding: 12px 24px;
+  }
+  .footer .social-links {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 30px;
+  }
+  p {
+    font-size: 18px;
+  }
+  .btn {
+    font-size: 16px;
+    padding: 14px 26px;
   }
   .footer .social-links {
     gap: 15px;
