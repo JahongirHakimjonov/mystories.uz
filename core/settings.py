@@ -55,7 +55,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "core.wsgi.application"
+# WSGI_APPLICATION = "core.wsgi.application"
 ASGI_APPLICATION = "core.asgi.application"
 
 # DATABASES = {
@@ -99,7 +99,11 @@ USE_I18N = True
 
 USE_TZ = True
 
-LANGUAGES = (("en", _("English")),)
+LANGUAGES = (
+    ("en", _("English")),
+    ("ru", _("Russian")),
+    ("uz", _("Uzbek")),
+)
 
 LOCALE_PATHS = [os.path.join(BASE_DIR, "locale")]
 

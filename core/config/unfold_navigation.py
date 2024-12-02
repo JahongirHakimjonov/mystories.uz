@@ -48,7 +48,6 @@ PAGES = [
     },
     {
         "seperator": True,
-        "collapsible": True,
         "title": _("Additional user data"),
         "items": [
             {
@@ -79,7 +78,6 @@ PAGES = [
     },
     {
         "seperator": True,
-        "collapsible": True,
         "title": _("Post"),
         "items": [
             {
@@ -110,7 +108,6 @@ PAGES = [
     },
     {
         "seperator": True,
-        "collapsible": True,
         "title": _("Additional"),
         "items": [
             {

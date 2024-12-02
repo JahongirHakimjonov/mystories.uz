@@ -17,5 +17,6 @@ class ActiveSessionsAdmin(ModelAdmin):
     list_display = ["id", "user", "ip", "user_agent", "last_activity"]
     autocomplete_fields = ["user"]
     search_fields = ["user__first_name", "user__last_name", "ip"]
+    readonly_fields = ["created_at", "updated_at"]
     list_filter = ["last_activity"]
     list_per_page = 50
