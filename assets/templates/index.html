@@ -42,6 +42,12 @@
         <div class="logo">
             Django Default<span class="version"></span>
         </div>
+        <!-- Menu Toggle Button for Mobile -->
+        <button class="menu-toggle" aria-label="Toggle Navigation">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
         <ul class="nav-links">
             <li><a href="{% url 'admin:index' %}">Admin</a></li>
             <li><a href="{% url 'swagger-ui' %}">Swagger</a></li>
@@ -81,6 +87,14 @@
     </div>
     <p>© 2024 Django Default. All rights reserved.</p>
 </footer>
+
+<script>
+    // JavaScript to toggle mobile navigation menu
+    document.querySelector('.menu-toggle').addEventListener('click', function() {
+        document.querySelector('.nav-links').classList.toggle('show');
+        this.classList.toggle('active');
+    });
+</script>
 
 </body>
 </html>
