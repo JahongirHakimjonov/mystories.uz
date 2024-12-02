@@ -1,4 +1,4 @@
-name: Deploy Django Application to Server for Production
+name: Deploy Django Application to Server for Development
 
 on:
   push:
