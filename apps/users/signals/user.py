@@ -6,7 +6,7 @@ from apps.users.models import ActiveSessions
 
 
 @receiver(post_save, sender=ActiveSessions)
-def increment_active_sessions(sender, instance, created, **kwargs):
+def increment_active_sessions(sender, instance, created, **kwargs):  # noqa
     if created:
         Notification.objects.create(
             user=instance.user,
