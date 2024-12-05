@@ -82,7 +82,7 @@ class PostListSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation["content"] = instance.content[:100]
+        representation["content"] = instance.content
         return representation
 
 

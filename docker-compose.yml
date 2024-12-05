@@ -18,6 +18,7 @@ services:
       - rabbitmq
       - redis
 
+
   db:
     image: postgres:15-alpine
     restart: always
@@ -31,10 +32,10 @@ services:
       - pg_data:/var/lib/postgresql/data
 
 
-
   redis:
     image: redis:latest
     restart: always
+
 
   rabbitmq:
     image: rabbitmq:management
@@ -49,7 +50,6 @@ services:
       - ${AMQP_PORT:-5672}:5672
     volumes:
       - rabbitmq:/var/lib/rabbitmq
-
 
 
   celery_worker:
@@ -67,6 +67,7 @@ services:
       - rabbitmq
       - db
 
+
 #  celery_beat:
 #    build:
 #      context: .
@@ -81,6 +82,7 @@ services:
 #      - redis
 #      - rabbitmq
 #      - db
+
 
 #  flower:
 #    env_file:
@@ -98,7 +100,6 @@ services:
 #      - redis
 #      - rabbitmq
 #      - db
-
 
 
 volumes:
