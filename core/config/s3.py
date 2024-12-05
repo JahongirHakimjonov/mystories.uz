@@ -22,7 +22,7 @@ DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
 MEDIA_URL = os.getenv(
     "MEDIA_URL",
-    f"{AWS_S3_ENDPOINT_URL}/799cabf6462740dcb4b79fda130c1355:{AWS_STORAGE_BUCKET_NAME}/media/",
+    f"{AWS_S3_ENDPOINT_URL}",
 )
 
-AWS_S3_VERIFY = False
+AWS_S3_VERIFY = True

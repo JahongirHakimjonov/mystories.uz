@@ -32,7 +32,7 @@ class PostListCreateView(APIView):
 
     def get(self, request):
         queryset = (
-            PostService.get_posts()
+            self.get_queryset()
             .select_related("author", "theme")
             .prefetch_related("tags")
         )

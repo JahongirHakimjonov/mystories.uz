@@ -12,7 +12,7 @@ def environment_callback(request):  # noqa
     Callback has to return a list of two values represeting text value and the color
     type of the label displayed in top right corner.
     """
-    return [os.getenv("STATUS"), "info"]  # info, danger, warning, success
+    return [os.getenv("STATUS"), "success"]  # info, danger, warning, success
 
 
 UNFOLD = {
@@ -37,7 +37,7 @@ UNFOLD = {
     "SHOW_LANGUAGES": True,
     "ENVIRONMENT": "core.config.unfold.environment_callback",
     "LOGIN": {
-        "image": lambda request: static("images/Rectangle.png"),
+        "image": lambda request: static("images/login.jpg"),
     },
     "STYLES": [
         lambda request: static("css/tailwind.css"),
@@ -52,17 +52,17 @@ UNFOLD = {
             "important-dark": "243 244 246",
         },
         "primary": {
-            "50": "65 144 176",
-            "100": "65 144 176",
-            "200": "65 144 176",
-            "300": "65 144 176",
-            "400": "65 144 176",
-            "500": "65 144 176",
-            "600": "65 144 176",
-            "700": "65 144 176",
-            "800": "65 144 176",
-            "900": "65 144 176",
-            "950": "65 144 176",
+            "50": "16 185 129",
+            "100": "16 185 129",
+            "200": "16 185 129",
+            "300": "16 185 129",
+            "400": "16 185 129",
+            "500": "16 185 129",
+            "600": "16 185 129",
+            "700": "16 185 129",
+            "800": "16 185 129",
+            "900": "16 185 129",
+            "950": "16 185 129",
         },
     },
     "EXTENSIONS": {
