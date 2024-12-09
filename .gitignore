@@ -20,5 +20,5 @@ assets/staticfiles/
 assets/staticfiles/*
 assets/media/*
 assets/media/
-assets/client_secret_*.json
-assets/client_secret_367993672441-sg99c5dmc7padjbirvok3esbi8j8j0cj.apps.googleusercontent.com.json
+assets/*.json
+assets/mystories.json
