@@ -56,6 +56,8 @@ class PasswordResetConfirmView(GenericAPIView):
         try:
             uid = force_bytes(urlsafe_base64_decode(uid))
             user = User.objects.get(pk=uid)
+            if not default_token_generator.check_token(user, token):
+                raise ValueError("Invalid token")
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             user = None
         if user is not None and default_token_generator.check_token(user, token):

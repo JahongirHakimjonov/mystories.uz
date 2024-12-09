@@ -9,6 +9,11 @@ BACKUP_FILE="$BACKUP_DIR/$(date +\%Y-\%m-\%d--%H-%M-%S)_$DB_NAME.sql"
 TELEGRAM_BOT_TOKEN="YOUR_TELEGRAM"
 TELEGRAM_CHAT_ID="YOUR_TELEGRAM_CHAT_ID"
 
+if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHAT_ID" ]; then
+    echo "Telegram configuration is missing" >&2
+    exit 1
+fi
+
 # Create backup directory if it doesn't exist
 mkdir -p "$BACKUP_DIR"
 

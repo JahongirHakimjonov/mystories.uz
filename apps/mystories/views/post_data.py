@@ -14,6 +14,18 @@ from apps.mystories.serializers import (
 )
 
 
+def handle_save(serializer, user):
+    try:
+        serializer.save(user=user)
+        return Response(
+            {"detail": "Action successful."}, status=status.HTTP_201_CREATED
+        )
+    except IntegrityError:
+        return Response(
+            {"detail": "Action failed."}, status=status.HTTP_400_BAD_REQUEST
+        )
+
+
 class ThemeApiView(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ThemeSerializer
@@ -108,11 +120,7 @@ class CommentApiView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            serializer.save(user=user)
-            return Response(
-                serializer.data,
-                status=status.HTTP_201_CREATED,
-            )
+            return handle_save(serializer, user)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

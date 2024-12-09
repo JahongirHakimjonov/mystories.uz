@@ -56,9 +56,17 @@ class SocialAuthView(APIView):
             return Response(jwt_token, status=status.HTTP_200_OK)
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
+        except KeyError as e:
             return Response(
-                {"error": str(e)},
+                {"error": f"Missing key: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except ActiveSessions.DoesNotExist:
+            return Response(
+                {"error": "Active session not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception:
+            return Response(
+                {"error": "An unexpected error occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
@@ -78,8 +86,10 @@ class SocialAuthView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             return HttpResponseRedirect(url)
-        except Exception as e:
+        except ValueError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception:
             return Response(
-                {"error": str(e)},
+                {"error": "An unexpected error occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
