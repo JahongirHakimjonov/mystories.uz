@@ -30,12 +30,14 @@ urlpatterns = [
     path("auth/check/username/", CheckUsernameView.as_view(), name="check_username"),
     path("auth/reset/password/", PasswordResetView.as_view(), name="reset_password"),
     path(
-        "auth/reset/<uidb64>/<token>/",
+        "auth/reset/<str:uidb64>/<str:token>/",
         PasswordResetConfirmView.as_view(),
         name="reset_password_confirm",
     ),
     path(
-        "auth/activate/<uidb64>/<token>/", ActivateUserView.as_view(), name="activate"
+        "auth/activate/<str:uidb64>/<str:token>/",
+        ActivateUserView.as_view(),
+        name="activate",
     ),
     path("auth/token/", CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("auth/token/refresh/", CustomTokenRefreshView.as_view(), name="token_refresh"),

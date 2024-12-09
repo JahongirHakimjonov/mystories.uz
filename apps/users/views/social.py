@@ -1,30 +1,29 @@
 from django.http import HttpResponseRedirect
 from rest_framework import status
+from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.throttling import UserRateThrottle
-from rest_framework.views import APIView
 
 from apps.users.models import ActiveSessions
+from apps.users.serializers import SocialAuthSerializer
 from apps.users.services import RegisterService
 from apps.users.services.github import Github
 from apps.users.services.google import Google
 
 
-class SocialAuthView(APIView):
+class SocialAuthView(GenericAPIView):
     permission_classes = [AllowAny]
     throttle_classes = [UserRateThrottle]
+    serializer_class = SocialAuthSerializer
 
-    @staticmethod
-    def post(request, provider_name, *args, **kwargs):
+    def post(self, request, provider_name, *args, **kwargs):
         """
         Handle OAuth authentication for supported providers.
         """
-        code = request.query_params.get("code")
-        if not code:
-            return Response(
-                {"error": "Code is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        code = serializer.validated_data.get("code")
 
         try:
             if provider_name == "github":

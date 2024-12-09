@@ -1,5 +1,5 @@
 from rest_framework import serializers
-
+from drf_spectacular.utils import extend_schema_field
 from apps.mystories.models import Post
 
 
@@ -25,12 +25,15 @@ class PostSerializer(serializers.ModelSerializer):
             "is_saved",
         )
 
+    @extend_schema_field(serializers.BooleanField)
     def get_is_author(self, obj):
         return obj.author == self.context["request"].user
 
+    @extend_schema_field(serializers.BooleanField)
     def get_is_liked(self, obj):
         return obj.likes.filter(user=self.context["request"].user).exists()
 
+    @extend_schema_field(serializers.BooleanField)
     def get_is_saved(self, obj):
         return obj.saves.filter(user=self.context["request"].user).exists()
 
