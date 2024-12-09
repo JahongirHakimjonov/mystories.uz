@@ -3,7 +3,6 @@ from django.conf.urls.i18n import i18n_patterns  # noqa: F401
 from django.contrib import admin
 from django.urls import path, include, re_path
 from django.views.static import serve
-
 from core.config.swagger import urlpatterns as swagger_patterns
 
 urlpatterns = (
@@ -18,6 +17,7 @@ urlpatterns = (
         path("api/v1/", include("apps.users.urls")),
         path("api/v1/", include("apps.mystories.urls")),
         path("rosetta/", include("rosetta.urls")),
+        # path("silk/", include("silk.urls", namespace="silk")),
         # Media and static files
         re_path(r"static/(?P<path>.*)", serve, {"document_root": settings.STATIC_ROOT}),
         re_path(r"media/(?P<path>.*)", serve, {"document_root": settings.MEDIA_ROOT}),

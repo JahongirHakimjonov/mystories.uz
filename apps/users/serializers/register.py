@@ -1,5 +1,6 @@
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_decode
 from django.utils.http import urlsafe_base64_encode
 from rest_framework import serializers
 
@@ -45,3 +46,32 @@ class RegisterSerializer(serializers.ModelSerializer):
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
         return user, uid, token
+
+
+class SocialAuthSerializer(serializers.Serializer):
+    code = serializers.CharField(required=True)
+
+    def validate(self, attrs):
+        code = attrs.get("code")
+        if not code:
+            raise serializers.ValidationError("Code is required")
+        return attrs
+
+
+class ActivateUserSerializer(serializers.Serializer):
+    uidb64 = serializers.CharField()
+    token = serializers.CharField()
+
+    def validate(self, attrs):
+        uidb64 = attrs.get("uidb64")
+        token = attrs.get("token")
+
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
+
+        if user and default_token_generator.check_token(user, token):
+            return attrs
+        raise serializers.ValidationError("Invalid activation link")

@@ -52,10 +52,12 @@ class PasswordResetView(GenericAPIView):
 class PasswordResetConfirmView(GenericAPIView):
     serializer_class = ChangePasswordConfirmSerializer
 
-    def post(self, request, uid, token):
+    def post(self, request, uidb64: str, token: str):
         try:
-            uid = force_bytes(urlsafe_base64_decode(uid))
+            uid = force_bytes(urlsafe_base64_decode(uidb64))
             user = User.objects.get(pk=uid)
+            if not default_token_generator.check_token(user, token):
+                raise ValueError("Invalid token")
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             user = None
         if user is not None and default_token_generator.check_token(user, token):

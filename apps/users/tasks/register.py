@@ -13,7 +13,8 @@ load_dotenv(find_dotenv(".env"))
 def send_activation_email(email, activation_link):
     from_email = os.getenv("EMAIL_HOST_USER")
     subject = "Activate your account"
-
+    if not from_email:
+        raise ValueError("EMAIL_HOST_USER is not set in .env file")
     html_message = render_to_string(
         "activate.html",
         {"activation_link": activation_link},

@@ -1,30 +1,29 @@
 from django.http import HttpResponseRedirect
 from rest_framework import status
+from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.throttling import UserRateThrottle
-from rest_framework.views import APIView
 
 from apps.users.models import ActiveSessions
+from apps.users.serializers import SocialAuthSerializer
 from apps.users.services import RegisterService
 from apps.users.services.github import Github
 from apps.users.services.google import Google
 
 
-class SocialAuthView(APIView):
+class SocialAuthView(GenericAPIView):
     permission_classes = [AllowAny]
     throttle_classes = [UserRateThrottle]
+    serializer_class = SocialAuthSerializer
 
-    @staticmethod
-    def post(request, provider_name, *args, **kwargs):
+    def post(self, request, provider_name, *args, **kwargs):
         """
         Handle OAuth authentication for supported providers.
         """
-        code = request.query_params.get("code")
-        if not code:
-            return Response(
-                {"error": "Code is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        code = serializer.validated_data.get("code")
 
         try:
             if provider_name == "github":
@@ -56,9 +55,17 @@ class SocialAuthView(APIView):
             return Response(jwt_token, status=status.HTTP_200_OK)
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
+        except KeyError as e:
             return Response(
-                {"error": str(e)},
+                {"error": f"Missing key: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except ActiveSessions.DoesNotExist:
+            return Response(
+                {"error": "Active session not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception:
+            return Response(
+                {"error": "An unexpected error occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
@@ -78,8 +85,10 @@ class SocialAuthView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             return HttpResponseRedirect(url)
-        except Exception as e:
+        except ValueError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception:
             return Response(
-                {"error": str(e)},
+                {"error": "An unexpected error occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )

@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from drf_spectacular.utils import extend_schema
 from apps.mystories.models import Theme, Tag, Like, Saved, Comment
 from apps.mystories.serializers import (
     ThemeSerializer,
@@ -12,6 +12,18 @@ from apps.mystories.serializers import (
     SavedSerializer,
     CommentSerializer,
 )
+
+
+def handle_save(serializer, user):
+    try:
+        serializer.save(user=user)
+        return Response(
+            {"detail": "Action successful."}, status=status.HTTP_201_CREATED
+        )
+    except IntegrityError:
+        return Response(
+            {"detail": "Action failed."}, status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 class ThemeApiView(APIView):
@@ -32,6 +44,7 @@ class TagsByThemeApiView(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = TagSerializer
 
+    @extend_schema(operation_id="tags_by_theme")
     def get(self, request, pk):
         tags = Tag.objects.filter(theme=pk)
         serializer = self.serializer_class(tags, many=True)
@@ -108,11 +121,7 @@ class CommentApiView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            serializer.save(user=user)
-            return Response(
-                serializer.data,
-                status=status.HTTP_201_CREATED,
-            )
+            return handle_save(serializer, user)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
