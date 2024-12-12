@@ -17,7 +17,7 @@ urlpatterns = (
         path("api/v1/", include("apps.users.urls")),
         path("api/v1/", include("apps.mystories.urls")),
         path("rosetta/", include("rosetta.urls")),
-        # path("silk/", include("silk.urls", namespace="silk")),
+        path("silk/", include("silk.urls", namespace="silk")),
         # Media and static files
         re_path(r"static/(?P<path>.*)", serve, {"document_root": settings.STATIC_ROOT}),
         re_path(r"media/(?P<path>.*)", serve, {"document_root": settings.MEDIA_ROOT}),
