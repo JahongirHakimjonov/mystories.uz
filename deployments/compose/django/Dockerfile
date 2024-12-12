@@ -35,7 +35,8 @@ COPY . /app
 RUN --mount=type=cache,id=custom-pip,target=/root/.cache/pip \
     pip install --upgrade pip && \
     pip install -r /app/requirements.txt && \
-    pip install uvicorn
+    pip install uvicorn && \
+    pip install gunicorn
 
 # Copy and set permissions for entrypoint script
 COPY ./deployments/compose/django/entrypoint /entrypoint
