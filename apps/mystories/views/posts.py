@@ -63,7 +63,7 @@ class PostDetailUpdateDeleteView(GenericAPIView):
             return PostDetailSerializer
         elif self.request.method == "PATCH":
             return PostSerializer
-        return PostSerializer  # Ensure a default serializer is returned
+        return PostSerializer
 
     def get_post(self, pk, user=None):
         queryset = Post.objects.select_related("author", "theme").prefetch_related(
