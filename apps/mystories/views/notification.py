@@ -1,7 +1,8 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from apps.mystories.models import Notification
 from apps.mystories.serializers import NotificationSerializer
 
@@ -13,6 +14,7 @@ class NotificationApiView(APIView):
     def get_queryset(self):
         return Notification.objects.filter(user=self.request.user)
 
+    @method_decorator(cache_page(60 * 5))
     def get(self, request):
         serializer = self.serializer_class(self.get_queryset(), many=True)
         return Response(serializer.data)

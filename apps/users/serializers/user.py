@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from apps.shared.serializers import CountrySerializer
-from apps.users.models import User
+from apps.users.models import User, ActiveSessions
 
 
 class UpdateAvatarSerializer(serializers.ModelSerializer):
@@ -49,3 +49,16 @@ class UpdateUserSerializer(serializers.ModelSerializer):
 
 class BlockSessionSerializer(serializers.Serializer):
     session_id = serializers.IntegerField()
+
+
+class ActiveSessionsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ActiveSessions
+        fields = (
+            "id",
+            "user",
+            "ip",
+            "user_agent",
+            "location",
+            "last_activity",
+        )

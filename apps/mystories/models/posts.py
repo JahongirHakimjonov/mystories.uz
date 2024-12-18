@@ -1,12 +1,18 @@
 from django.db import models
+from django.db.models import Index, Func
 from django.utils.translation import gettext_lazy as _
 
 from apps.shared.models import AbstractBaseModel
 
 
+class CastToText(Func):
+    function = "MD5"
+    template = "MD5(%(expressions)s::text)"
+
+
 class Post(AbstractBaseModel):
     title = models.CharField(max_length=255, verbose_name=_("Title"), db_index=True)
-    content = models.JSONField(verbose_name=_("Content"), db_index=True)
+    content = models.JSONField(verbose_name=_("Content"))
     banner = models.ImageField(upload_to="posts", verbose_name=_("Banner"))
     author = models.ForeignKey(
         "users.User",
@@ -44,6 +50,9 @@ class Post(AbstractBaseModel):
         verbose_name_plural = _("Posts")
         ordering = ["-created_at"]
         db_table = "posts"
+        indexes = [
+            Index(CastToText("content"), name="content_md5_idx"),
+        ]
 
     def __str__(self):
         return self.title

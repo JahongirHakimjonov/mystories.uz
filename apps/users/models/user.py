@@ -72,7 +72,9 @@ class User(AbstractUser, AbstractBaseModel):
     objects = UserManager()
 
     def __str__(self):
-        return f"{self.username} {self.email}" if self.email else str(_("User"))
+        return (
+            f"{self.id}-{self.username}-{self.email}" if self.email else str(_("User"))
+        )
 
     class Meta:
         verbose_name = _("User")

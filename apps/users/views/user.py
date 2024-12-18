@@ -1,10 +1,12 @@
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.users.models import ActiveSessions
-from apps.users.serializers import BlockSessionSerializer
+from apps.users.serializers import BlockSessionSerializer, ActiveSessionsSerializer
 from apps.users.serializers import UpdateAvatarSerializer, UpdateUserSerializer
 
 
@@ -54,3 +56,14 @@ class BlockSessionView(APIView):
             )
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ListSessionView(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ActiveSessionsSerializer
+
+    @method_decorator(cache_page(60 * 5))
+    def get(self, request, *args, **kwargs):
+        sessions = ActiveSessions.objects.filter(user=request.user, is_active=True)
+        serializer = self.serializer_class(sessions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
