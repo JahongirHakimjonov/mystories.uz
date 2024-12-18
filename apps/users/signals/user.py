@@ -2,7 +2,7 @@ import io
 
 from PIL import Image
 from django.core.files.base import ContentFile
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 from apps.mystories.models import Notification, NotificationType
@@ -40,18 +40,25 @@ def increment_active_sessions(sender, instance, created, **kwargs):  # noqa
         )
 
 
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if instance.pk:
-        old_instance = User.objects.get(pk=instance.pk)
-        if old_instance.avatar != instance.avatar:
-            if instance.avatar:
-                img = Image.open(instance.avatar)
-                if img.format != "WEBP":
-                    img_io = io.BytesIO()
-                    img.save(img_io, format="WEBP", quality=100)
-                    instance.avatar.save(
-                        f"{instance.avatar.name.split('.')[0]}.webp",
-                        ContentFile(img_io.getvalue()),
-                        save=False,
-                    )
+@receiver(pre_save, sender=User)
+def create_user_profile(sender, instance, **kwargs):
+    if instance.avatar and not instance.avatar.name.endswith(".webp"):
+        try:
+            print("Converting to webp")
+            instance.avatar.seek(0)  # Faylni boshidan o'qishni ta'minlash
+            img = Image.open(instance.avatar)
+            print(f"Image format: {img.format}")
+
+            if img.format != "WEBP":
+                img_io = io.BytesIO()
+                img.save(img_io, format="WEBP", quality=100)
+                webp_filename = f"{instance.avatar.name.rsplit('.', 1)[0]}.webp"
+
+                instance.avatar.save(
+                    webp_filename,
+                    ContentFile(img_io.getvalue()),
+                    save=False,
+                )
+                print(f"Saved as {webp_filename}")
+        except Exception as e:
+            print(f"Error converting image: {e}")
