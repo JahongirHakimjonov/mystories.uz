@@ -1,10 +1,4 @@
-import io
-
-from PIL import Image
-from django.core.files.base import ContentFile
 from django.db import models
-from django.utils import timezone
-from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
 from apps.shared.models import AbstractBaseModel
@@ -58,30 +52,6 @@ class Post(AbstractBaseModel):
         """Ko'rishlar sonini oshirish uchun metod."""
         self.view_count += 1
         self.save()
-
-    def save(self, *args, **kwargs):
-        if not self.created_at:
-            self.created_at = timezone.now()
-        if not self.slug:
-            self.slug = slugify(f"{self.title}-{self.created_at.strftime('%Y-%m-%d')}")
-            unique_slug = self.slug
-            num = 1
-            while Post.objects.filter(slug=unique_slug).exists():
-                unique_slug = f"{self.slug}-{num}"
-                num += 1
-            self.slug = unique_slug
-        if self.banner:
-            img = Image.open(self.banner)
-            if img.format != "WEBP":
-                img_io = io.BytesIO()
-                img.save(img_io, format="WEBP", quality=100)
-                self.banner.save(
-                    f"{self.banner.name.split('.')[0]}.webp",
-                    ContentFile(img_io.getvalue()),
-                    save=False,
-                )
-        self.slug = self.slug.lower()
-        super().save(*args, **kwargs)
 
 
 class Like(AbstractBaseModel):

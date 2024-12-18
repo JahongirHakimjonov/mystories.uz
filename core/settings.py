@@ -35,7 +35,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "apps.shared.middlewares.sessions.CheckActiveSessionMiddleware",
-    "silk.middleware.SilkyMiddleware",
+    # "silk.middleware.SilkyMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -112,7 +112,7 @@ MODELTRANSLATION_LANGUAGES = ("uz", "ru", "en")
 
 MODELTRANSLATION_DEFAULT_LANGUAGE = "uz"
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATICFILES_DIRS = [str(BASE_DIR.joinpath("assets/static"))]
 STATIC_ROOT = str(BASE_DIR.joinpath("assets/staticfiles"))
 
@@ -127,3 +127,5 @@ AUTH_USER_MODEL = "users.User"
 # SECURE_HSTS_PRELOAD = True
 # X_FRAME_OPTIONS = 'DENY'
 # CONTENT_SECURITY_POLICY = "default-src 'self'; script-src 'self'"
+
+# SILKY_PYTHON_PROFILER = True
