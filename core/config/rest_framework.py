@@ -10,10 +10,13 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.UserRateThrottle",
     ),
     "DEFAULT_THROTTLE_RATES": {
-        "anon": "100/day",
+        "anon": "60/min",
         "user": "1000/day",
         "story": "1000/day",
     },
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+    ],
 }
 
 SPECTACULAR_SETTINGS = {
@@ -21,5 +24,5 @@ SPECTACULAR_SETTINGS = {
     "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
     "REDOC_DIST": "SIDECAR",
     "TITLE": "My Stories API",
-    "DESCRIPTION": "My Stories Swagger API documentation",
+    "DESCRIPTION": "My Stories API documentation",
 }

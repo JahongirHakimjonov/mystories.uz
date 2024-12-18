@@ -5,6 +5,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import UserRateThrottle
 from drf_spectacular.utils import extend_schema
+# from silk.profiling.profiler import silk_profile
+
 from apps.mystories.models import Post
 from apps.mystories.serializers.posts import (
     PostListSerializer,
@@ -35,6 +37,7 @@ class PostListCreateView(GenericAPIView):
     def get_queryset(self):
         return Post.objects.select_related("author", "theme").prefetch_related("tags")
 
+    # @silk_profile()
     def get(self, request):
         queryset = self.get_queryset()
         paginator = self.pagination_class()
@@ -63,7 +66,7 @@ class PostDetailUpdateDeleteView(GenericAPIView):
             return PostDetailSerializer
         elif self.request.method == "PATCH":
             return PostSerializer
-        return PostSerializer  # Ensure a default serializer is returned
+        return PostSerializer
 
     def get_post(self, pk, user=None):
         queryset = Post.objects.select_related("author", "theme").prefetch_related(
@@ -73,7 +76,7 @@ class PostDetailUpdateDeleteView(GenericAPIView):
             return get_object_or_404(queryset, pk=pk, author=user)
         return get_object_or_404(queryset, pk=pk)
 
-    @extend_schema(operation_id="post_detail")
+    # @silk_profile()
     def get(self, request, pk=None):
         post = self.get_post(pk)
         post.increment_views()

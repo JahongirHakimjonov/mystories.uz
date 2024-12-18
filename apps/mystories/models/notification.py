@@ -1,11 +1,12 @@
-import io
-
-from PIL import Image
-from django.core.files.base import ContentFile
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from apps.shared.models import AbstractBaseModel
+
+
+class NotificationType(models.TextChoices):
+    SINGLE = "SINGLE", _("Single")
+    ALL = "ALL", _("All")
 
 
 class Notification(AbstractBaseModel):
@@ -25,6 +26,12 @@ class Notification(AbstractBaseModel):
     message = models.TextField(db_index=True, verbose_name=_("Message"))
     is_send = models.BooleanField(default=False, verbose_name=_("Is Send"))
     is_read = models.BooleanField(default=False, verbose_name=_("Is Read"))
+    type = models.CharField(
+        max_length=10,
+        choices=NotificationType,
+        default=NotificationType.SINGLE,
+        verbose_name=_("Type"),
+    )
 
     class Meta:
         db_table = "notifications"
@@ -34,16 +41,3 @@ class Notification(AbstractBaseModel):
 
     def __str__(self):
         return self.message
-
-    def save(self, *args, **kwargs):
-        if self.banner:
-            img = Image.open(self.banner)
-            if img.format != "WEBP":
-                img_io = io.BytesIO()
-                img.save(img_io, format="WEBP", quality=100)
-                self.banner.save(
-                    f"{self.banner.name.split('.')[0]}.webp",
-                    ContentFile(img_io.getvalue()),
-                    save=False,
-                )
-        super().save(*args, **kwargs)
