@@ -18,6 +18,7 @@ from apps.users.views import (
     UpdateUserView,
     CustomTokenRefreshView,
     BlockSessionView,
+    ListSessionView,
 )
 
 urlpatterns = [
@@ -43,6 +44,7 @@ urlpatterns = [
     path("auth/token/refresh/", CustomTokenRefreshView.as_view(), name="token_refresh"),
     path("auth/token/verify/", TokenVerifyView.as_view(), name="token_verify"),
     path("auth/session/block/", BlockSessionView.as_view(), name="block_session"),
+    path("auth/session/list/", ListSessionView.as_view(), name="list_session"),
     path(
         "auth/<str:provider_name>/callback/",
         SocialAuthView.as_view(),

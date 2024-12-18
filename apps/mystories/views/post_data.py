@@ -1,9 +1,12 @@
 from django.db import IntegrityError
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from drf_spectacular.utils import extend_schema
+
 from apps.mystories.models import Theme, Tag, Like, Saved, Comment
 from apps.mystories.serializers import (
     ThemeSerializer,
@@ -32,8 +35,9 @@ class ThemeApiView(APIView):
 
     @staticmethod
     def get_queryset():
-        return Theme.objects.all()
+        return Theme.objects.filter(is_active=True)
 
+    @method_decorator(cache_page(60 * 60))
     def get(self, request):
         queryset = self.get_queryset()
         serializer = self.serializer_class(queryset, many=True)
@@ -44,9 +48,10 @@ class TagsByThemeApiView(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = TagSerializer
 
+    @method_decorator(cache_page(60 * 60))
     @extend_schema(operation_id="tags_by_theme")
     def get(self, request, pk):
-        tags = Tag.objects.filter(theme=pk)
+        tags = Tag.objects.filter(theme=pk, is_active=True)
         serializer = self.serializer_class(tags, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -143,7 +148,7 @@ class CommentDeleteApiView(APIView):
             status=status.HTTP_404_NOT_FOUND,
         )
 
-    @staticmethod
+    @method_decorator(cache_page(60 * 60))
     def get(self, request, pk):
         comments = Comment.objects.filter(post=pk)
         serializer = self.serializer_class(comments, many=True)

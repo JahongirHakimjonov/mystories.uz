@@ -1,11 +1,12 @@
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import UserRateThrottle
-from drf_spectacular.utils import extend_schema
-# from silk.profiling.profiler import silk_profile
 
 from apps.mystories.models import Post
 from apps.mystories.serializers.posts import (
@@ -37,7 +38,7 @@ class PostListCreateView(GenericAPIView):
     def get_queryset(self):
         return Post.objects.select_related("author", "theme").prefetch_related("tags")
 
-    # @silk_profile()
+    @method_decorator(cache_page(60 * 5))
     def get(self, request):
         queryset = self.get_queryset()
         paginator = self.pagination_class()
@@ -76,7 +77,7 @@ class PostDetailUpdateDeleteView(GenericAPIView):
             return get_object_or_404(queryset, pk=pk, author=user)
         return get_object_or_404(queryset, pk=pk)
 
-    # @silk_profile()
+    @extend_schema(operation_id="post_detail")
     def get(self, request, pk=None):
         post = self.get_post(pk)
         post.increment_views()
