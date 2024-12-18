@@ -1,8 +1,4 @@
-import io
-
-from PIL import Image
 from django.contrib.auth.models import AbstractUser
-from django.core.files.base import ContentFile
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -42,7 +38,7 @@ class User(AbstractUser, AbstractBaseModel):
         default=False,
     )
     role = models.CharField(
-        choices=RoleChoices.choices,
+        choices=RoleChoices,
         max_length=20,
         default=RoleChoices.USER,
         verbose_name=_("Role"),
@@ -55,7 +51,7 @@ class User(AbstractUser, AbstractBaseModel):
         verbose_name=_("Country"),
     )
     register_type = models.CharField(
-        choices=RegisterTypeChoices.choices,
+        choices=RegisterTypeChoices,
         max_length=20,
         default=RegisterTypeChoices.EMAIL,
         verbose_name=_("Register type"),
@@ -92,43 +88,38 @@ class User(AbstractUser, AbstractBaseModel):
             "user": self.id,
         }
 
-    def clean(self):
-        if self.avatar and not self.avatar.storage.exists(self.avatar.name):
-            self.avatar = None
-
-    def save(self, *args, **kwargs):
-        self.clean()
-        if self.avatar:
-            img = Image.open(self.avatar)
-            if img.format != "WEBP":
-                img_io = io.BytesIO()
-                img.save(img_io, format="WEBP", quality=100)
-                self.avatar.save(
-                    f"{self.avatar.name.split('.')[0]}.webp",
-                    ContentFile(img_io.getvalue()),
-                    save=False,
-                )
-        super().save(*args, **kwargs)
+    # def clean(self):
+    #     if self.avatar and not self.avatar.storage.exists(self.avatar.name):
+    #         self.avatar = None
+    #
+    # def save(self, *args, **kwargs):
+    #     self.clean()
+    #     super().save(*args, **kwargs)
 
 
 class UserData(AbstractBaseModel):
     user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name="data", verbose_name=_("User")
+        User,
+        on_delete=models.CASCADE,
+        related_name="data",
+        verbose_name=_("User"),
+        db_index=True,
     )
     provider = models.CharField(
-        choices=RegisterTypeChoices.choices, max_length=20, verbose_name=_("Provider")
+        choices=RegisterTypeChoices,
+        max_length=20,
+        verbose_name=_("Provider"),
+        db_index=True,
     )
-    uid = models.CharField(max_length=100, verbose_name=_("Provider ID"))
-    extra_data = models.JSONField(verbose_name=_("Extra data"), null=True, blank=True)
+    uid = models.CharField(max_length=100, verbose_name=_("Provider ID"), db_index=True)
+    extra_data = models.JSONField(
+        verbose_name=_("Extra data"), null=True, blank=True, db_index=True
+    )
 
     class Meta:
         verbose_name = _("User data")
         verbose_name_plural = _("User data")
         db_table = "user_data"
-        indexes = [
-            models.Index(fields=["provider"]),
-            models.Index(fields=["uid"]),
-        ]
         ordering = ["-created_at"]
 
     def __str__(self):

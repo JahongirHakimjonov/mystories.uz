@@ -20,15 +20,15 @@ UNFOLD = {
     "SITE_HEADER": "Django Default",
     "SITE_URL": "/",
     "SITE_ICON": {
-        "light": lambda request: static("images/django-logo.png"),
-        "dark": lambda request: static("images/django-logo.png"),
+        "light": lambda request: static("images/django-logo.webp"),
+        "dark": lambda request: static("images/django-logo.webp"),
     },
     "SITE_FAVICONS": [
         {
             "rel": "icon",
             "sizes": "32x32",
             "type": "image/svg+xml",
-            "href": lambda request: static("images/django-logo.png"),
+            "href": lambda request: static("images/django-logo.webp"),
         },
     ],
     "SITE_SYMBOL": "speed",
@@ -37,7 +37,7 @@ UNFOLD = {
     "SHOW_LANGUAGES": True,
     "ENVIRONMENT": "core.config.unfold.environment_callback",
     "LOGIN": {
-        "image": lambda request: static("images/login.jpg"),
+        "image": lambda request: static("images/login.webp"),
     },
     "STYLES": [
         lambda request: static("css/tailwind.css"),

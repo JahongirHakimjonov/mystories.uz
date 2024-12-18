@@ -1,12 +1,10 @@
 from django.http import JsonResponse
-from django.utils import timezone
 from django.utils.deprecation import MiddlewareMixin
 from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from apps.users.models import ActiveSessions
-from apps.users.services import RegisterService
 
 
 class CheckActiveSessionMiddleware(MiddlewareMixin):
@@ -26,12 +24,6 @@ class CheckActiveSessionMiddleware(MiddlewareMixin):
                     user=user, access_token=token
                 ).first()
                 if session:
-                    session.last_activity = timezone.now()
-                    session.ip_address = RegisterService.get_client_ip(request)
-                    session.location = RegisterService.get_location(session.ip_address)
-                    session.user_agent = request.META.get(
-                        "HTTP_USER_AGENT", "Unknown User Agent"
-                    )
                     if fcm_token:
                         session.fcm_token = fcm_token
                     session.save()
