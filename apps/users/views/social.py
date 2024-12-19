@@ -63,9 +63,9 @@ class SocialAuthView(GenericAPIView):
             return Response(
                 {"error": "Active session not found"}, status=status.HTTP_404_NOT_FOUND
             )
-        except Exception:
+        except Exception as e:
             return Response(
-                {"error": "An unexpected error occurred"},
+                {"error": f"An unexpected error occurred: {e}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
