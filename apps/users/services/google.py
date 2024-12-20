@@ -18,7 +18,6 @@ class Google:
     def authenticate(code):
         try:
             with ThreadPoolExecutor() as executor:
-                # Exchange the code for a token
                 token_future = executor.submit(
                     requests.post,
                     "https://oauth2.googleapis.com/token",
@@ -36,7 +35,6 @@ class Google:
                 token_data = token_response.json()
                 token = token_data["id_token"]
 
-                # Verify the Google token and get user info
                 idinfo = id_token.verify_oauth2_token(
                     token, google_requests.Request(), os.getenv("GOOGLE_CLIENT_ID")
                 )
@@ -57,30 +55,33 @@ class Google:
 
                 if created and idinfo.get("picture"):
                     # Save the avatar if the user is created and the avatar is provided
-                    avatar_future = executor.submit(
-                        requests.get, idinfo["picture"], params={}
-                    )
-                    avatar_response = avatar_future.result()
-                    if avatar_response.status_code == 200:
-                        # Convert the image to WebP format
-                        image = Image.open(BytesIO(avatar_response.content))
-                        webp_image_io = BytesIO()
-                        image.save(webp_image_io, format="WEBP")
-                        webp_image_io.seek(0)
-
-                        # Extract and sanitize the filename
-                        parsed_url = urllib.parse.urlparse(idinfo["picture"])
-                        filename = os.path.basename(parsed_url.path)
-                        sanitized_filename = (
-                            f"{user.username}_avatar_{filename.split('.')[0]}.webp"
+                    try:
+                        avatar_future = executor.submit(
+                            requests.get, idinfo["picture"], params={}
                         )
+                        avatar_response = avatar_future.result()
+                        if avatar_response.status_code == 200:
+                            # Convert the image to WebP format
+                            image = Image.open(BytesIO(avatar_response.content))
+                            webp_image_io = BytesIO()
+                            image.save(webp_image_io, format="WEBP")
+                            webp_image_io.seek(0)
 
-                        user.avatar.save(
-                            sanitized_filename,
-                            ContentFile(webp_image_io.read()),
-                            save=False,
-                        )
-                        user.save()
+                            # Extract and sanitize the filename
+                            parsed_url = urllib.parse.urlparse(idinfo["picture"])
+                            filename = os.path.basename(parsed_url.path)
+                            sanitized_filename = (
+                                f"{user.username}_avatar_{filename.split('.')[0]}.webp"
+                            )
+
+                            user.avatar.save(
+                                sanitized_filename,
+                                ContentFile(webp_image_io.read()),
+                                save=False,
+                            )
+                            user.save()
+                    except Exception as e:
+                        print(f"Failed to save avatar: {str(e)}")
 
                 # Create or update UserData
                 UserData.objects.update_or_create(
@@ -113,10 +114,11 @@ class Google:
         ]
         scope = urllib.parse.quote(" ".join(scopes))
         url = (
-            f"https://accounts.google.com/o/oauth2/v2/auth?"
+            f"https://accounts.google.com/o/oauth2/auth?"
             f"client_id={client_id}&"
             f"redirect_uri={redirect_uri}&"
             f"response_type=code&"
             f"scope={scope}"
         )
+        print(url)
         return url

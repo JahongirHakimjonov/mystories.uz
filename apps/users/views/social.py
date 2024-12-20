@@ -65,7 +65,7 @@ class SocialAuthView(GenericAPIView):
             )
         except Exception as e:
             return Response(
-                {"error": f"An unexpected error occurred: {e}"},
+                {"error": f"An unexpected error occurred: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 

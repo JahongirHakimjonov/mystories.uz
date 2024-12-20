@@ -93,24 +93,29 @@ class Github:
                 )
 
                 if created and user_info.get("avatar_url"):
-                    # Save the avatar if the user is created and the avatar is provided
-                    avatar_future = executor.submit(
-                        requests.get, user_info["avatar_url"], params={}
-                    )
-                    avatar_response = avatar_future.result()
-                    if avatar_response.status_code == 200:
-                        # Convert the image to WebP format
-                        image = Image.open(BytesIO(avatar_response.content))
-                        webp_image_io = BytesIO()
-                        image.save(webp_image_io, format="WEBP")
-                        webp_image_io.seek(0)
-
-                        user.avatar.save(
-                            f"{user.username}_avatar.webp",
-                            ContentFile(webp_image_io.read()),
-                            save=False,
+                    print("Saving avatar")
+                    print(user_info["avatar_url"])
+                    try:
+                        # Save the avatar if the user is created and the avatar is provided
+                        avatar_future = executor.submit(
+                            requests.get, user_info["avatar_url"], params={}
                         )
-                        user.save()
+                        avatar_response = avatar_future.result()
+                        if avatar_response.status_code == 200:
+                            # Convert the image to WebP format
+                            image = Image.open(BytesIO(avatar_response.content))
+                            webp_image_io = BytesIO()
+                            image.save(webp_image_io, format="WEBP")
+                            webp_image_io.seek(0)
+
+                            user.avatar.save(
+                                f"{user.username}_avatar.webp",
+                                ContentFile(webp_image_io.read()),
+                                save=False,
+                            )
+                            user.save()
+                    except Exception as e:
+                        print(f"Failed to save avatar: {str(e)}")
 
                 # Create or update UserData
                 UserData.objects.update_or_create(

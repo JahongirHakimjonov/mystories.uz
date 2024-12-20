@@ -1,0 +1,11 @@
+WARNING 2024-12-20 14:59:25,712 log Bad Request: /api/v1/auth/token/
+WARNING 2024-12-20 15:10:30,018 log Not Found: /api/v1/posts/2/
+WARNING 2024-12-20 15:10:32,973 log Not Found: /api/v1/posts/2/
+WARNING 2024-12-20 15:11:42,713 log Not Found: /favicon.ico
+WARNING 2024-12-20 15:13:49,211 log Not Found: /favicon.ico
+WARNING 2024-12-20 15:14:52,603 log Not Found: /favicon.ico
+WARNING 2024-12-20 15:14:54,128 log Not Found: /favicon.ico
+WARNING 2024-12-20 15:14:54,860 log Not Found: /favicon.ico
+WARNING 2024-12-20 15:15:25,278 log Not Found: /favicon.ico
+WARNING 2024-12-20 15:15:58,520 log Not Found: /favicon.ico
+WARNING 2024-12-20 15:25:10,871 log Not Found: /favicon.ico
