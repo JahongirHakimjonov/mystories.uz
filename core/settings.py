@@ -35,6 +35,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "apps.shared.middlewares.sessions.CheckActiveSessionMiddleware",
+    # 'djangorestframework_camel_case.middleware.CamelCaseMiddleWare',
     # "silk.middleware.SilkyMiddleware",
 ]
 

@@ -24,3 +24,11 @@ class MeSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+
+    # def to_representation(self, instance):
+    #     representation = super().to_representation(instance)
+    #     camel_case_representation = {}
+    #     for key, value in representation.items():
+    #         camel_case_key = re.sub(r'_([a-z])', lambda x: x.group(1).upper(), key)
+    #         camel_case_representation[camel_case_key] = value
+    #     return camel_case_representation

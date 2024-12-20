@@ -15,7 +15,7 @@ REST_FRAMEWORK = {
         "story": "1000/day",
     },
     "DEFAULT_RENDERER_CLASSES": [
-        "rest_framework.renderers.JSONRenderer",
+        "djangorestframework_camel_case.render.CamelCaseJSONRenderer",
     ],
 }
 
