@@ -9,3 +9,60 @@ WARNING 2024-12-20 15:14:54,860 log Not Found: /favicon.ico
 WARNING 2024-12-20 15:15:25,278 log Not Found: /favicon.ico
 WARNING 2024-12-20 15:15:58,520 log Not Found: /favicon.ico
 WARNING 2024-12-20 15:25:10,871 log Not Found: /favicon.ico
+ERROR 2024-12-20 18:05:12,142 log Internal Server Error: /api/v1/auth/me/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/site-packages/rest_framework/views.py", line 497, in dispatch
+    self.initial(request, *args, **kwargs)
+  File "/usr/local/lib/python3.10/site-packages/rest_framework/views.py", line 415, in initial
+    self.check_permissions(request)
+  File "/usr/local/lib/python3.10/site-packages/rest_framework/views.py", line 333, in check_permissions
+    self.permission_denied(
+  File "/usr/local/lib/python3.10/site-packages/rest_framework/views.py", line 174, in permission_denied
+    raise exceptions.NotAuthenticated()
+rest_framework.exceptions.NotAuthenticated: Authentication credentials were not provided.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/site-packages/django/utils/module_loading.py", line 30, in import_string
+    return cached_import(module_path, class_name)
+  File "/usr/local/lib/python3.10/site-packages/django/utils/module_loading.py", line 16, in cached_import
+    return getattr(module, class_name)
+AttributeError: module 'apps.shared.exceptions' has no attribute 'custom_exception_handler'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/site-packages/rest_framework/settings.py", line 179, in import_from_string
+    return import_string(val)
+  File "/usr/local/lib/python3.10/site-packages/django/utils/module_loading.py", line 32, in import_string
+    raise ImportError(
+ImportError: Module "apps.shared.exceptions" does not define a "custom_exception_handler" attribute/class
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/local/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/usr/local/lib/python3.10/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/usr/local/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/usr/local/lib/python3.10/site-packages/rest_framework/views.py", line 463, in handle_exception
+    exception_handler = self.get_exception_handler()
+  File "/usr/local/lib/python3.10/site-packages/rest_framework/views.py", line 298, in get_exception_handler
+    return self.settings.EXCEPTION_HANDLER
+  File "/usr/local/lib/python3.10/site-packages/rest_framework/settings.py", line 227, in __getattr__
+    val = perform_import(val, attr)
+  File "/usr/local/lib/python3.10/site-packages/rest_framework/settings.py", line 168, in perform_import
+    return import_from_string(val, setting_name)
+  File "/usr/local/lib/python3.10/site-packages/rest_framework/settings.py", line 182, in import_from_string
+    raise ImportError(msg)
+ImportError: Could not import 'apps.shared.exceptions.custom_exception_handler' for API setting 'EXCEPTION_HANDLER'. ImportError: Module "apps.shared.exceptions" does not define a "custom_exception_handler" attribute/class.
+WARNING 2024-12-20 18:06:29,970 log Unauthorized: /api/v1/auth/me/
+WARNING 2024-12-20 18:08:17,830 log Unauthorized: /api/v1/auth/me/
+WARNING 2024-12-20 18:08:40,349 log Unauthorized: /api/v1/auth/me/
