@@ -26,32 +26,8 @@ class SocialAuthView(GenericAPIView):
         code = serializer.validated_data.get("code")
 
         try:
-            if provider_name == "github":
-                jwt_token = Github.authenticate(code)
-            elif provider_name == "google":
-                jwt_token = Google.authenticate(code)
-            else:
-                return Response(
-                    {"error": "Unsupported provider"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            ip_address = RegisterService.get_client_ip(request)
-            user_agent = request.META.get("HTTP_USER_AGENT", "Unknown User Agent")
-            location = RegisterService.get_location(ip_address)
-            refresh_token = jwt_token.get("refresh")
-            access_token = jwt_token.get("access")
-            user_id = jwt_token.get("user")
-
-            ActiveSessions.objects.create(
-                user_id=user_id,
-                ip=ip_address,
-                user_agent=user_agent,
-                location=location,
-                refresh_token=refresh_token,
-                access_token=access_token,
-            )
-
+            jwt_token = self.authenticate_with_provider(provider_name, code)
+            self.create_active_session(request, jwt_token)
             return Response(jwt_token, status=status.HTTP_200_OK)
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -59,15 +35,40 @@ class SocialAuthView(GenericAPIView):
             return Response(
                 {"error": f"Missing key: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST
             )
-        except ActiveSessions.DoesNotExist:
-            return Response(
-                {"error": "Active session not found"}, status=status.HTTP_404_NOT_FOUND
-            )
         except Exception as e:
             return Response(
                 {"error": f"An unexpected error occurred: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+    def authenticate_with_provider(self, provider_name, code):
+        """
+        Authenticate with the given provider name and code.
+        """
+        if provider_name == "github":
+            return Github.authenticate(code)
+        elif provider_name == "google":
+            return Google.authenticate(code)
+        else:
+            raise ValueError("Unsupported provider")
+
+    def create_active_session(self, request, jwt_token):
+        """
+        Create an active session for the authenticated user.
+        """
+        ip_address = RegisterService.get_client_ip(request)
+        user_agent = request.META.get("HTTP_USER_AGENT", "Unknown User Agent")
+        location = RegisterService.get_location(ip_address)
+        fcm_token = request.headers.get("FCM-Token")
+        ActiveSessions.objects.create(
+            user_id=jwt_token.get("user"),
+            ip=ip_address,
+            user_agent=user_agent,
+            location=location,
+            refresh_token=jwt_token.get("refresh"),
+            access_token=jwt_token.get("access"),
+            fcm_token=fcm_token if fcm_token else None,
+        )
 
     @staticmethod
     def get(request, provider_name, *args, **kwargs):
@@ -75,15 +76,7 @@ class SocialAuthView(GenericAPIView):
         Redirect to the provider's authentication URL.
         """
         try:
-            if provider_name == "github":
-                url = Github.get_auth_url()
-            elif provider_name == "google":
-                url = Google.get_auth_url()
-            else:
-                return Response(
-                    {"error": "Unsupported provider"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+            url = SocialAuthView.get_auth_url(provider_name)
             return HttpResponseRedirect(url)
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -92,3 +85,15 @@ class SocialAuthView(GenericAPIView):
                 {"error": "An unexpected error occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+    @staticmethod
+    def get_auth_url(provider_name):
+        """
+        Get the authentication URL for the given provider.
+        """
+        if provider_name == "github":
+            return Github.get_auth_url()
+        elif provider_name == "google":
+            return Google.get_auth_url()
+        else:
+            raise ValueError("Unsupported provider")

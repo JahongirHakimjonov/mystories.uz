@@ -17,6 +17,7 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "djangorestframework_camel_case.render.CamelCaseJSONRenderer",
     ],
+    "EXCEPTION_HANDLER": "apps.shared.exceptions.custom_exception_handler",
 }
 
 SPECTACULAR_SETTINGS = {

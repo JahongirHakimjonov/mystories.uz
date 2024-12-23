@@ -6,8 +6,10 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from apps.users.models import ActiveSessions
-from apps.users.serializers import CustomTokenObtainPairSerializer
-from apps.users.serializers import CustomTokenRefreshSerializer
+from apps.users.serializers import (
+    CustomTokenObtainPairSerializer,
+    CustomTokenRefreshSerializer,
+)
 from apps.users.services import RegisterService
 
 
@@ -23,20 +25,26 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         ip_address = RegisterService.get_client_ip(request)
         user_agent = request.META.get("HTTP_USER_AGENT", "Unknown User Agent")
         location = RegisterService.get_location(ip_address)
-        refresh_token = jwt_token.get("refresh")
-        access_token = jwt_token.get("access")
         user_id = jwt_token.get("user")
+        fcm_token = request.headers.get("FCM-Token")
 
         ActiveSessions.objects.create(
             user_id=user_id,
             ip=ip_address,
             user_agent=user_agent,
             location=location,
-            refresh_token=refresh_token,
-            access_token=access_token,
+            refresh_token=jwt_token["refresh"],
+            access_token=jwt_token["access"],
+            fcm_token=fcm_token if fcm_token else None,
         )
 
-        return Response({"refresh": refresh_token, "access": access_token})
+        return Response(
+            {
+                "refresh": jwt_token["refresh"],
+                "access": jwt_token["access"],
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 class CustomTokenRefreshView(APIView):
@@ -62,10 +70,7 @@ class CustomTokenRefreshView(APIView):
                 )
 
             new_access_token = str(token.access_token)
-            # new_refresh_token = str(token)
-
             session.access_token = new_access_token
-            # session.refresh_token = new_refresh_token
             session.save()
 
             return Response({"access": new_access_token}, status=status.HTTP_200_OK)
