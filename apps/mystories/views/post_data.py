@@ -136,7 +136,7 @@ class CommentDeleteApiView(APIView):
 
     @staticmethod
     def delete(request, pk):
-        comment = Comment.objects.filter(pk=pk, user=request.user).first()
+        comment = Comment.objects.get(pk=pk, user=request.user)
         if comment:
             comment.delete()
             return Response(
@@ -148,7 +148,6 @@ class CommentDeleteApiView(APIView):
             status=status.HTTP_404_NOT_FOUND,
         )
 
-    @method_decorator(cache_page(60 * 60))
     def get(self, request, pk):
         comments = Comment.objects.filter(post=pk)
         serializer = self.serializer_class(comments, many=True)

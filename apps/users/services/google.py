@@ -1,6 +1,5 @@
 import os
 import urllib.parse
-from concurrent.futures import ThreadPoolExecutor
 from io import BytesIO
 
 import requests
@@ -17,91 +16,86 @@ class Google:
     @staticmethod
     def authenticate(code):
         try:
-            with ThreadPoolExecutor() as executor:
-                token_future = executor.submit(
-                    requests.post,
-                    "https://oauth2.googleapis.com/token",
-                    json={
-                        "code": code,
-                        "client_id": os.getenv("GOOGLE_CLIENT_ID"),
-                        "client_secret": os.getenv("GOOGLE_CLIENT_SECRET"),
-                        "redirect_uri": os.getenv("GOOGLE_REDIRECT_URI"),
-                        "grant_type": "authorization_code",
-                    },
-                    data={},
-                )
-                token_response = token_future.result()
-                token_response.raise_for_status()
-                token_data = token_response.json()
-                token = token_data["id_token"]
+            token_data = Google._fetch_token(code)
+            idinfo = Google._verify_token(token_data["id_token"])
+            user = Google._get_or_create_user(idinfo)
+            if idinfo.get("picture"):
+                Google._save_user_avatar(user, idinfo["picture"])
+            Google._update_user_data(user, idinfo)
+            return user.tokens()
+        except (ValueError, requests.RequestException) as e:
+            raise ValueError(f"Authentication failed: {str(e)}")
 
-                idinfo = id_token.verify_oauth2_token(
-                    token, google_requests.Request(), os.getenv("GOOGLE_CLIENT_ID")
-                )
+    @staticmethod
+    def _fetch_token(code):
+        response = requests.post(
+            "https://oauth2.googleapis.com/token",
+            json={
+                "code": code,
+                "client_id": os.getenv("GOOGLE_CLIENT_ID"),
+                "client_secret": os.getenv("GOOGLE_CLIENT_SECRET"),
+                "redirect_uri": os.getenv("GOOGLE_REDIRECT_URI"),
+                "grant_type": "authorization_code",
+            },
+        )
+        response.raise_for_status()
+        return response.json()
 
-                # Get or create the user based on the email
-                user, created = User.objects.get_or_create(
-                    email=idinfo["email"],
-                    defaults={
-                        "username": RegisterService.check_unique_username(
-                            idinfo["email"].split("@")[0]
-                        ),
-                        "first_name": idinfo.get("given_name", ""),
-                        "last_name": idinfo.get("family_name", ""),
-                        "is_active": True,
-                        "register_type": RegisterTypeChoices.GOOGLE,
-                    },
-                )
+    @staticmethod
+    def _verify_token(token):
+        return id_token.verify_oauth2_token(
+            token, google_requests.Request(), os.getenv("GOOGLE_CLIENT_ID")
+        )
 
-                if created and idinfo.get("picture"):
-                    # Save the avatar if the user is created and the avatar is provided
-                    try:
-                        avatar_future = executor.submit(
-                            requests.get, idinfo["picture"], params={}
-                        )
-                        avatar_response = avatar_future.result()
-                        if avatar_response.status_code == 200:
-                            # Convert the image to WebP format
-                            image = Image.open(BytesIO(avatar_response.content))
-                            webp_image_io = BytesIO()
-                            image.save(webp_image_io, format="WEBP")
-                            webp_image_io.seek(0)
+    @staticmethod
+    def _get_or_create_user(idinfo):
+        user, created = User.objects.get_or_create(
+            email=idinfo["email"],
+            defaults={
+                "username": RegisterService.check_unique_username(
+                    idinfo["email"].split("@")[0]
+                ),
+                "first_name": idinfo.get("given_name", ""),
+                "last_name": idinfo.get("family_name", ""),
+                "is_active": True,
+                "register_type": RegisterTypeChoices.GOOGLE,
+            },
+        )
+        return user
 
-                            # Extract and sanitize the filename
-                            parsed_url = urllib.parse.urlparse(idinfo["picture"])
-                            filename = os.path.basename(parsed_url.path)
-                            sanitized_filename = (
-                                f"{user.username}_avatar_{filename.split('.')[0]}.webp"
-                            )
+    @staticmethod
+    def _save_user_avatar(user, picture_url):
+        try:
+            response = requests.get(picture_url)
+            response.raise_for_status()
+            image = Image.open(BytesIO(response.content))
+            webp_image_io = BytesIO()
+            image.save(webp_image_io, format="WEBP")
+            webp_image_io.seek(0)
 
-                            user.avatar.save(
-                                sanitized_filename,
-                                ContentFile(webp_image_io.read()),
-                                save=False,
-                            )
-                            user.save()
-                    except Exception as e:
-                        print(f"Failed to save avatar: {str(e)}")
+            parsed_url = urllib.parse.urlparse(picture_url)
+            filename = os.path.basename(parsed_url.path)
+            sanitized_filename = f"{user.username}_avatar_{filename.split('.')[0]}.webp"
 
-                # Create or update UserData
-                UserData.objects.update_or_create(
-                    user=user,
-                    defaults={
-                        "provider": RegisterTypeChoices.GOOGLE,
-                        "uid": idinfo["sub"],
-                        "extra_data": idinfo,
-                    },
-                )
-
-                # Generate JWT tokens
-                token = user.tokens()
-                return token
-        except ValueError as e:
-            # Handle invalid token or expired token
-            raise ValueError(f"Invalid token: {str(e)}")
+            user.avatar.save(
+                sanitized_filename,
+                ContentFile(webp_image_io.read()),
+                save=False,
+            )
+            user.save()
         except requests.RequestException as e:
-            # Handle request errors
-            raise ValueError(f"Failed to exchange code: {str(e)}")
+            print(f"Failed to save avatar: {str(e)}")
+
+    @staticmethod
+    def _update_user_data(user, idinfo):
+        UserData.objects.update_or_create(
+            user=user,
+            defaults={
+                "provider": RegisterTypeChoices.GOOGLE,
+                "uid": idinfo["sub"],
+                "extra_data": idinfo,
+            },
+        )
 
     @staticmethod
     def get_auth_url():
@@ -120,5 +114,4 @@ class Google:
             f"response_type=code&"
             f"scope={scope}"
         )
-        print(url)
         return url
